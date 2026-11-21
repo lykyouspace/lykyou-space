@@ -928,6 +928,27 @@ function PublicMemberProfilePage({username}:{username:string}) {
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState("");
   const [friendStatus,setFriendStatus]=useState("");
+  const {isStaff}=useStaffRole();
+  const [profileComments,setProfileComments]=useState<any[]>([]);
+  const [commentText,setCommentText]=useState("");
+  const [replyTo,setReplyTo]=useState<string|null>(null);
+  const [replyText,setReplyText]=useState("");
+  const [commentBusy,setCommentBusy]=useState(false);
+  const [commentError,setCommentError]=useState("");
+  const [commentNotice,setCommentNotice]=useState("");
+  const [reportingId,setReportingId]=useState<string|null>(null);
+  const [reportDetails,setReportDetails]=useState("");
+  async function loadProfileComments(profileId:string){
+    if(!supabase)return;
+    const {data,error:commentsError}=await supabase.from("profile_comments").select("id,profile_id,author_id,parent_id,body,created_at").eq("profile_id",profileId).order("created_at",{ascending:true});
+    if(commentsError){setCommentError(commentsError.message);return;}
+    const rows=data??[];
+    const authorIds=[...new Set(rows.map((row:any)=>row.author_id))];
+    const {data:authors}=authorIds.length?await supabase.from("profiles").select("id,username,display_name,avatar_url").in("id",authorIds):{data:[] as any[]};
+    const authorMap=new Map((authors??[]).map((author:any)=>[author.id,author]));
+    setProfileComments(rows.map((row:any)=>({...row,author:authorMap.get(row.author_id)??null})));
+    setCommentError("");
+  }
   useEffect(()=>{
     let active=true;
     async function load(){
@@ -940,6 +961,37 @@ function PublicMemberProfilePage({username}:{username:string}) {
     }
     void load();return()=>{active=false;};
   },[username]);
+  useEffect(()=>{
+    if(profile?.id)void loadProfileComments(profile.id);
+  },[profile?.id]);
+  async function publishProfileComment(parentId:string|null=null){
+    if(!user){navigate("/login");return;}
+    if(!supabase||!profile)return;
+    const body=(parentId?replyText:commentText).trim();
+    if(!body)return;
+    setCommentBusy(true);setCommentError("");setCommentNotice("");
+    const {error:insertError}=await supabase.from("profile_comments").insert({profile_id:profile.id,author_id:user.id,parent_id:parentId,body});
+    if(insertError)setCommentError(insertError.message);
+    else{setCommentText("");setReplyText("");setReplyTo(null);await loadProfileComments(profile.id);}
+    setCommentBusy(false);
+  }
+  async function deleteProfileComment(commentId:string){
+    if(!supabase||!profile)return;
+    setCommentBusy(true);setCommentError("");setCommentNotice("");
+    const {error:deleteError}=await supabase.from("profile_comments").delete().eq("id",commentId);
+    if(deleteError)setCommentError(deleteError.message);
+    else{setCommentNotice("Comment deleted.");await loadProfileComments(profile.id);}
+    setCommentBusy(false);
+  }
+  async function reportProfileComment(commentId:string){
+    if(!user){navigate("/login");return;}
+    if(!supabase)return;
+    setCommentBusy(true);setCommentError("");setCommentNotice("");
+    const {error:reportError}=await supabase.from("profile_comment_reports").insert({comment_id:commentId,reporter_id:user.id,details:reportDetails.trim()});
+    if(reportError)setCommentError(reportError.code==="23505"?"You have already reported this comment.":reportError.message);
+    else{setCommentNotice("Thanks. Your report has been sent to the moderation queue.");setReportingId(null);setReportDetails("");}
+    setCommentBusy(false);
+  }
   async function addFriend(){
     if(!user){navigate("/login");return;}
     if(!supabase||!profile)return;
@@ -956,6 +1008,19 @@ function PublicMemberProfilePage({username}:{username:string}) {
       {friendStatus&&<p className="auth-message success">{friendStatus}</p>}
       <p className="member-profile-bio">{profile.bio||"A LYKYOU in the galaxy."}</p>
       <div className="member-profile-facts"><div><small>MY BIAS</small><strong>{profile.bias?.length?profile.bias.join(" · "):"Not set yet"}</strong></div><div><small>BIAS WRECKER</small><strong>{profile.bias_wrecker?.length?profile.bias_wrecker.join(" · "):"Not set yet"}</strong></div><div><small>FAVOURITE SONG</small><strong>{profile.favourite_song||"Not added yet"}</strong></div><div><small>FAVOURITE ERA</small><strong>{profile.favourite_era||"Not added yet"}</strong></div></div>
+      <section className="profile-guestbook" aria-labelledby="profile-guestbook-title">
+        <div className="profile-guestbook-heading"><div><span className="eyebrow">A LITTLE NOTE FOR THIS LYKYOU</span><h3 id="profile-guestbook-title">Guestbook <span>{profileComments.length}</span></h3><p>Leave a kind message, say hello or reply to another fan.</p></div><MessageCircle size={24}/></div>
+        {user?<form className="profile-comment-compose" onSubmit={e=>{e.preventDefault();void publishProfileComment();}}><textarea value={commentText} onChange={e=>setCommentText(e.target.value)} placeholder="Write a message for this LYKYOU…" maxLength={1000} rows={3} required/><div><small>{commentText.length}/1000</small><button className="button-primary" type="submit" disabled={commentBusy||!commentText.trim()}><Send size={14}/>{commentBusy?"Posting…":"Leave a comment"}</button></div></form>:<div className="profile-comment-signin">Sign in to leave a comment. <button className="text-link" onClick={()=>navigate("/login")}>Sign in <ArrowRight size={13}/></button></div>}
+        {commentError&&<p className="auth-message error" role="alert">{commentError}</p>}
+        {commentNotice&&<p className="auth-message success" role="status">{commentNotice}</p>}
+        {profileComments.length===0?<div className="profile-comment-empty">No messages yet. Be the first to sign this guestbook.</div>:<div className="profile-comment-list">{profileComments.filter((comment:any)=>!comment.parent_id).map((comment:any)=><article className="profile-comment" key={comment.id}>
+          <div className="profile-comment-main"><div className="profile-comment-avatar">{comment.author?.avatar_url?<img src={comment.author.avatar_url} alt=""/>:(comment.author?.display_name??"L").slice(0,1).toUpperCase()}</div><div className="profile-comment-content"><div className="profile-comment-meta"><strong>{comment.author?.display_name??"LYKYOU"}</strong><span>@{comment.author?.username??"lykyou"}</span><time dateTime={comment.created_at}>{new Date(comment.created_at).toLocaleString()}</time></div><p>{comment.body}</p><div className="profile-comment-actions">{user&&<button type="button" onClick={()=>{setReplyTo(replyTo===comment.id?null:comment.id);setReplyText("");}}>Reply</button>}{(user?.id===comment.author_id||user?.id===profile.id||isStaff)&&<button type="button" onClick={()=>void deleteProfileComment(comment.id)} disabled={commentBusy}>Delete</button>}{user&&user.id!==comment.author_id&&<button type="button" onClick={()=>{setReportingId(reportingId===comment.id?null:comment.id);setReportDetails("");}}>Report</button>}</div>
+          {reportingId===comment.id&&<form className="profile-comment-report" onSubmit={e=>{e.preventDefault();void reportProfileComment(comment.id);}}><textarea value={reportDetails} onChange={e=>setReportDetails(e.target.value)} placeholder="Optional details for the moderators" maxLength={500} rows={2}/><button className="button-outline" type="submit" disabled={commentBusy}>Send report</button></form>}
+          {replyTo===comment.id&&user&&<form className="profile-comment-reply-form" onSubmit={e=>{e.preventDefault();void publishProfileComment(comment.id);}}><textarea value={replyText} onChange={e=>setReplyText(e.target.value)} placeholder="Write a reply…" maxLength={1000} rows={2} required/><button className="button-primary" type="submit" disabled={commentBusy||!replyText.trim()}>{commentBusy?"Posting…":"Reply"}</button></form>}
+          </div></div>
+          {profileComments.filter((reply:any)=>reply.parent_id===comment.id).map((reply:any)=><div className="profile-comment-reply" key={reply.id}><div className="profile-comment-avatar">{reply.author?.avatar_url?<img src={reply.author.avatar_url} alt=""/>:(reply.author?.display_name??"L").slice(0,1).toUpperCase()}</div><div className="profile-comment-content"><div className="profile-comment-meta"><strong>{reply.author?.display_name??"LYKYOU"}</strong><span>@{reply.author?.username??"lykyou"}</span><time dateTime={reply.created_at}>{new Date(reply.created_at).toLocaleString()}</time></div><p>{reply.body}</p><div className="profile-comment-actions">{(user?.id===reply.author_id||user?.id===profile.id||isStaff)&&<button type="button" onClick={()=>void deleteProfileComment(reply.id)} disabled={commentBusy}>Delete</button>}{user&&user.id!==reply.author_id&&<button type="button" onClick={()=>{setReportingId(reportingId===reply.id?null:reply.id);setReportDetails("");}}>Report</button>}</div>{reportingId===reply.id&&<form className="profile-comment-report" onSubmit={e=>{e.preventDefault();void reportProfileComment(reply.id);}}><textarea value={reportDetails} onChange={e=>setReportDetails(e.target.value)} placeholder="Optional details for the moderators" maxLength={500} rows={2}/><button className="button-outline" type="submit" disabled={commentBusy}>Send report</button></form>}</div></div>)}
+        </article>)}</div>}
+      </section>
       <button className="text-link" onClick={()=>navigate("/members")}>Back to Meet the LYKYOUs <ArrowRight size={13}/></button>
     </div>
   </section>;
