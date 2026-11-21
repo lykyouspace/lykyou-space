@@ -71,20 +71,35 @@ export function useStaffRole() {
 
   useEffect(() => {
     let active = true;
+
     async function loadRoles() {
       if (!user || !configured || !supabase) {
-        setRoles([]);
+        if (active) setRoles([]);
         return;
       }
+
       const { data, error } = await supabase
         .from("staff_roles")
         .select("role")
         .eq("user_id", user.id)
         .eq("active", true);
+
       if (active) setRoles(error ? [] : (data ?? []).map((row) => row.role));
     }
+
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === "visible") void loadRoles();
+    };
+
     void loadRoles();
-    return () => { active = false; };
+    window.addEventListener("focus", refreshWhenVisible);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+
+    return () => {
+      active = false;
+      window.removeEventListener("focus", refreshWhenVisible);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
   }, [user?.id, configured]);
 
   return {
