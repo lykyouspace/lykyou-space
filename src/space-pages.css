@@ -2231,3 +2231,13 @@ body { min-width: 320px; overflow-x: hidden; }
 @media(prefers-reduced-motion:reduce) {
   .space-pages *, .space-pages *:before, .space-pages *:after { scroll-behavior:auto!important;transition:none!important;animation:none!important; }
 }
+/* The supplied mascot file has a black matte; screen blending removes that matte on the dark galaxy theme. */
+.space-pages .groups-design-banner::after,
+.space-pages .notifications-design-banner::after,
+.space-pages .admin-design-banner::after,
+.space-pages .updates-hero::after,
+.space-pages .groups-banner-art img,
+.space-pages .groups-wolf-card img,
+.space-pages .hero-wolf,
+.space-pages .brand-wolf,
+.space-pages .promo-wolf { mix-blend-mode:screen !important; }
