@@ -1942,3 +1942,29 @@ body { min-width: 320px; overflow-x: hidden; }
     z-index: 30;
   }
 }
+
+
+/* WOLF-only crop from the existing LYKN India mascot artwork.
+   The source logo lettering is outside this viewBox; keep the mascot itself uncropped. */
+.space-pages .brand-wolf,
+.space-pages .promo-wolf {
+  object-fit: contain !important;
+  object-position: center !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  mix-blend-mode: normal;
+  filter: drop-shadow(0 5px 12px rgba(4, 6, 18, .28));
+}
+.space-pages .brand-wolf { width: 58px; height: 48px; }
+.space-pages .promo-wolf { width: 72px; height: 58px; }
+.space-pages .hero-wolf { object-fit: contain !important; object-position: center !important; }
+.space-pages .groups-featured-art img,
+.space-pages .groups-wolf-card img,
+.space-pages .groups-banner-art img {
+  object-fit: contain !important;
+  object-position: center !important;
+}
+@media(max-width:650px) {
+  .space-pages .brand-wolf { width: 46px; height: 40px; }
+  .space-pages .promo-wolf { width: 62px; height: 50px; }
+}
