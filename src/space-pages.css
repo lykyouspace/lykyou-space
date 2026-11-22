@@ -2540,3 +2540,24 @@ body { min-width: 320px; overflow-x: hidden; }
   background:radial-gradient(ellipse at 82% 40%,rgba(167,139,250,.25),transparent 40%),linear-gradient(115deg,#151a38 0%,#202044 58%,#292044 100%) !important;
   border-color:rgba(196,181,253,.26) !important;
 }
+
+
+/* LYKN page split: a visible bridge to the full archive */
+.universe-archive-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  margin: 30px 0;
+  padding: 26px 28px;
+  border: 1px solid rgba(196,181,253,.28);
+  border-radius: 22px;
+  background: linear-gradient(120deg, rgba(52,34,91,.72), rgba(13,45,60,.78));
+  box-shadow: 0 14px 36px rgba(4,10,28,.18);
+}
+.universe-archive-card h3 { margin: 6px 0 8px; color: #fff; font-size: 1.35rem; }
+.universe-archive-card p { margin: 0; max-width: 620px; color: #cbd5e1; line-height: 1.6; }
+.universe-archive-card .button-primary { flex: 0 0 auto; }
+@media (max-width: 680px) {
+  .universe-archive-card { align-items: flex-start; flex-direction: column; padding: 22px; }
+}
