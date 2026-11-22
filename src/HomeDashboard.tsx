@@ -126,7 +126,7 @@ const PREVIEW_HOME_DATA: HomeData = {
     { id: "tui", name: "TUI", color: "#F9A8D4", birthday: "23 Mar" },
   ],
   viewer: { displayName: "LYKYOU" },
-  heroImageUrl: "https://media.komchadluek.net/uploads/images/contents/w1024/2026/02/D2vdZOViyXZz6LJ2ceO5.webp?x-image-process=style%2Flg-webp",
+  heroImageUrl: "/images/lykyou-space-banner.webp",
   chips: [
     { id: "members", label: "5 MEMBERS", icon: "star", tone: "amber" },
     { id: "space", label: "1 SPACE", icon: "cube", tone: "violet" },
@@ -356,7 +356,7 @@ function Icon({ name, size = 20, fill = false }: { name: IconName; size?: number
 
 /* The approved LYKYOU wolf mascot was cropped directly from the supplied PDF.
    Every mascot slot uses that artwork; the LYKN India logo remains separate. */
-const MASCOT_SRC: string = "/lykyou-wolf-mascot.svg";
+const MASCOT_SRC: string = "/images/lykyou-wolf.webp";
 
 function Mascot({ size = 40, className = "" }: { size?: number; className?: string }) {
   const style = { "--s": `${size}px` } as CSSProperties;
@@ -424,7 +424,7 @@ function Sidebar({
     >
       <div className="brand">
         <div className="logo">
-          <img src="/lykyou-wolf-mascot.svg" alt="LYKN India Fanclub mascot" draggable={false} />
+          <img src="/images/lykyou-wolf.webp" alt="LYKN India Fanclub mascot" draggable={false} />
         </div>
         <span className="brand-wordmark"><b>LYKYOU</b><i>SPACE</i></span>
       </div>
