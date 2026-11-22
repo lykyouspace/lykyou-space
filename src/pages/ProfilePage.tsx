@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { ArrowRight, Check, Save, UserRound, Camera, ImagePlus } from "lucide-react";
+import { ArrowRight, Check, Save, UserRound, Camera, ImagePlus, MessageCircle, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, useStaffRole } from "../lib/auth";
 import { supabase } from "../lib/supabase";
@@ -53,6 +53,10 @@ export default function ProfilePage() {
   const [uploading, setUploading] = useState<"avatar" | "cover" | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [profileComments, setProfileComments] = useState<any[]>([]);
+  const [commentText, setCommentText] = useState("");
+  const [commentBusy, setCommentBusy] = useState(false);
+  const [commentError, setCommentError] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -96,6 +100,37 @@ export default function ProfilePage() {
     void load();
     return () => { active = false; };
   }, [user?.id]);
+
+  async function loadProfileComments() {
+    if (!user || !supabase) return;
+    const { data, error: commentsLoadError } = await supabase.from("profile_comments")
+      .select("id,author_id,body,created_at,parent_id")
+      .eq("profile_id", user.id).order("created_at", { ascending: false }).limit(100);
+    if (commentsLoadError) { setCommentError(commentsLoadError.message); return; }
+    const rows = data ?? [];
+    const authorIds = [...new Set(rows.map((row: any) => row.author_id))];
+    const { data: authors, error: authorsError } = authorIds.length
+      ? await supabase.from("profiles").select("id,username,display_name,avatar_url").in("id", authorIds)
+      : { data: [], error: null };
+    if (authorsError) { setCommentError(authorsError.message); return; }
+    const authorMap = new Map((authors ?? []).map((author: any) => [author.id, author]));
+    setProfileComments(rows.map((row: any) => ({ ...row, author: authorMap.get(row.author_id) ?? null })));
+    setCommentError("");
+  }
+
+  useEffect(() => { if (user?.id) void loadProfileComments(); }, [user?.id]);
+
+  async function publishProfileComment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!user || !supabase || !commentText.trim()) return;
+    setCommentBusy(true); setCommentError("");
+    const { error: insertError } = await supabase.from("profile_comments").insert({
+      profile_id: user.id, author_id: user.id, body: commentText.trim(),
+    });
+    if (insertError) setCommentError(insertError.message);
+    else { setCommentText(""); await loadProfileComments(); }
+    setCommentBusy(false);
+  }
 
   async function uploadProfileImage(kind: "avatar" | "cover", file?: File) {
     if (!file || !user || !supabase) return;
@@ -217,6 +252,21 @@ export default function ProfilePage() {
           <div><small>FAVOURITE SONG</small><strong>{form.favourite_song || "Not added yet"}</strong></div>
           <div><small>FAVOURITE ERA</small><strong>{form.favourite_era || "Not added yet"}</strong></div>
         </div>
+        <section className="profile-guestbook" aria-labelledby="my-profile-guestbook-title">
+          <div className="profile-guestbook-heading"><div><span className="eyebrow">MESSAGES FROM YOUR PEOPLE</span><h3 id="my-profile-guestbook-title">Profile comments <span>{profileComments.length}</span></h3><p>A little space for LYKYOUs to leave you a message.</p></div><MessageCircle size={24}/></div>
+          <form className="profile-comment-compose" onSubmit={publishProfileComment}>
+            <textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Leave a message on your profile…" maxLength={1000} rows={3} required />
+            <div><small>{commentText.length}/1000</small><button className="button-primary" type="submit" disabled={commentBusy || !commentText.trim()}><Send size={14}/>{commentBusy ? "Posting…" : "Post comment"}</button></div>
+          </form>
+          {commentError && <p className="auth-message error" role="alert">{commentError}</p>}
+          {profileComments.length === 0 ? <div className="profile-comment-empty">No comments yet. Share your profile and invite your fandom friends to say hello.</div> : <div className="profile-comment-list">
+            {profileComments.filter((comment: any) => !comment.parent_id).map((comment: any) => <article className="profile-comment" key={comment.id}>
+              <div className="profile-comment-main"><div className="profile-comment-avatar">{comment.author?.avatar_url ? <img src={comment.author.avatar_url} alt=""/> : (comment.author?.display_name ?? "L").slice(0,1).toUpperCase()}</div>
+                <div className="profile-comment-content"><div className="profile-comment-meta"><strong>{comment.author?.display_name ?? "LYKYOU"}</strong><span>@{comment.author?.username ?? "lykyou"}</span><time dateTime={comment.created_at}>{new Date(comment.created_at).toLocaleString()}</time></div><p>{comment.body}</p></div>
+              </div>
+            </article>)}
+          </div>}
+        </section>
         <p className="member-profile-privacy">Your profile visibility is set to <strong>{form.profile_visibility}</strong>. Optional personal details remain private.</p>
         {message && <div className="auth-message success" role="status">{message}</div>}
       </div>
