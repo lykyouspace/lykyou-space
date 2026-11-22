@@ -2385,3 +2385,86 @@ body { min-width: 320px; overflow-x: hidden; }
 @media(prefers-reduced-motion:reduce){
  .space-pages .home-page .discovery-tile{transition:none}
 }
+
+
+/* LYKYOU Space consistency pass: galaxy palette, readable imagery and dark navigation. */
+.space-pages {
+  background:
+    radial-gradient(ellipse at 72% -18%, rgba(124,58,237,.18), transparent 43%),
+    radial-gradient(ellipse at 8% 58%, rgba(90,82,160,.08), transparent 38%),
+    #0c0d19 !important;
+}
+.space-pages .hero-banner {
+  background:
+    radial-gradient(ellipse at 82% 45%, rgba(167,139,250,.30), transparent 40%),
+    radial-gradient(ellipse at 15% 100%, rgba(125,211,252,.09), transparent 44%),
+    linear-gradient(115deg,#151a39 0%,#1c1b43 56%,#292044 100%) !important;
+  border-color: rgba(196,181,253,.32) !important;
+}
+.space-pages .welcome-strip {
+  border-color: rgba(196,181,253,.30) !important;
+  background: radial-gradient(ellipse at 90% 0%,rgba(167,139,250,.18),transparent 48%),linear-gradient(100deg,#211d40,#171a2e 78%) !important;
+}
+.space-pages .welcome-strip .strip-icon {
+  background: rgba(167,139,250,.18) !important;
+  color: #d9ccff !important;
+}
+.space-pages .welcome-strip span { color:#b9b2d5 !important; }
+.space-pages .welcome-strip button { color:#d2c4ff !important; }
+.space-pages .bias-corner-hero,
+.space-pages .bias-hero-nut,
+.space-pages .bias-hero-ot5 {
+  background: radial-gradient(ellipse at 80% 42%,rgba(167,139,250,.24),transparent 40%),linear-gradient(120deg,#171a38 0%,#262047 58%,#20203c 100%) !important;
+}
+.space-pages .universe-banner,
+.space-pages .universe-member-manager,
+.space-pages .groups-page-v2 .groups-heading.space-design-banner,
+.space-pages .groups-featured-card,
+.space-pages .member-tools-heading,
+.space-pages .notifications-page-v2 .member-tools-heading.space-design-banner {
+  background: radial-gradient(ellipse at 82% 42%,rgba(167,139,250,.24),transparent 40%),linear-gradient(115deg,#151a38 0%,#202044 58%,#292044 100%) !important;
+  border-color: rgba(196,181,253,.26) !important;
+}
+.space-pages .hero-banner > .hero-group-photo {
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  mix-blend-mode:normal !important;
+  z-index:1 !important;
+  filter:drop-shadow(0 18px 36px rgba(0,0,0,.42)) !important;
+}
+.space-pages .hero-art { z-index:3 !important; }
+.space-pages .hero-art .hero-wolf {
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  mix-blend-mode:normal !important;
+  object-fit:contain !important;
+  width:100% !important;
+  height:100% !important;
+}
+.space-pages .sidebar-promo .promo-wolf {
+  display:block !important;
+  position:relative;
+  z-index:2;
+  width:84px;
+  height:76px;
+  margin:-8px 0 5px auto;
+  object-fit:contain;
+  filter:drop-shadow(0 7px 14px rgba(0,0,0,.35));
+}
+.space-pages .site-footer {
+  background:#0c0d19 !important;
+  color:#9997b1 !important;
+  border-top:1px solid rgba(196,181,253,.16) !important;
+}
+.space-pages .mobile-bar,
+.space-pages .more-drawer {
+  background:rgba(14,16,30,.98) !important;
+  color:#eeeaff !important;
+  border-color:rgba(196,181,253,.2) !important;
+}
+.space-pages .mobile-bar button,
+.space-pages .more-drawer button { color:#d4cafa !important; }
+.space-pages .mobile-bar button.selected { color:#fff !important;background:rgba(124,58,237,.22) !important; }
+.space-pages .mobile-bar svg { color:inherit !important; }
