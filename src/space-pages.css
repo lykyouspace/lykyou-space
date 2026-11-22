@@ -2487,3 +2487,56 @@ body { min-width: 320px; overflow-x: hidden; }
     linear-gradient(90deg,rgba(17,19,43,.96) 0%,rgba(24,23,55,.84) 58%,rgba(25,21,49,.46) 100%),
     url("/images/lykn-group-hero.webp") center right/cover no-repeat !important;
 }
+
+
+/* Keep the LYKN archive browsable without forcing a very long first page. */
+.space-pages .universe-archive-toggle {
+  margin:24px 0;
+  border:1px solid rgba(196,181,253,.25);
+  border-radius:18px;
+  overflow:hidden;
+  background:linear-gradient(145deg,rgba(31,29,62,.78),rgba(18,22,42,.92));
+}
+.space-pages .universe-archive-toggle > summary {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:18px 20px;
+  cursor:pointer;
+  list-style:none;
+  color:#eeeaff;
+}
+.space-pages .universe-archive-toggle > summary::-webkit-details-marker { display:none; }
+.space-pages .universe-archive-toggle > summary b {
+  display:block;
+  color:#d4c7ff;
+  font:800 11px Manrope,sans-serif;
+  letter-spacing:.14em;
+}
+.space-pages .universe-archive-toggle > summary small {
+  display:block;
+  margin-top:5px;
+  color:#a7a4c2;
+  font-size:10px;
+}
+.space-pages .universe-archive-open {
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  flex:none;
+  color:#d2c3ff;
+  font-size:10px;
+  font-weight:800;
+}
+.space-pages .universe-archive-toggle[open] > summary {
+  border-bottom:1px solid rgba(196,181,253,.16);
+  background:rgba(124,58,237,.12);
+}
+.space-pages .universe-archive-content { padding:20px; }
+.space-pages .fun-hero,
+.space-pages .hub-feature,
+.space-pages .fandom-hub-hero {
+  background:radial-gradient(ellipse at 82% 40%,rgba(167,139,250,.25),transparent 40%),linear-gradient(115deg,#151a38 0%,#202044 58%,#292044 100%) !important;
+  border-color:rgba(196,181,253,.26) !important;
+}
