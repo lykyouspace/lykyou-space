@@ -2468,3 +2468,22 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .more-drawer button { color:#d4cafa !important; }
 .space-pages .mobile-bar button.selected { color:#fff !important;background:rgba(124,58,237,.22) !important; }
 .space-pages .mobile-bar svg { color:inherit !important; }
+
+
+/* Put LYKN imagery inside the fandom pages too, not only the landing hero. */
+.space-pages .universe-banner {
+  background:
+    linear-gradient(90deg,rgba(17,19,43,.97) 0%,rgba(24,23,55,.86) 52%,rgba(25,21,49,.46) 100%),
+    url("/images/lykn-group-hero.webp") center right/cover no-repeat !important;
+}
+.space-pages .updates-hero {
+  background:
+    linear-gradient(90deg,rgba(17,19,43,.96) 0%,rgba(24,23,55,.84) 58%,rgba(25,21,49,.46) 100%),
+    url("/images/lykn-group-hero.webp") center right/cover no-repeat !important;
+  border-color:rgba(196,181,253,.26) !important;
+}
+.space-pages .community-hero-banner {
+  background:
+    linear-gradient(90deg,rgba(17,19,43,.96) 0%,rgba(24,23,55,.84) 58%,rgba(25,21,49,.46) 100%),
+    url("/images/lykn-group-hero.webp") center right/cover no-repeat !important;
+}
