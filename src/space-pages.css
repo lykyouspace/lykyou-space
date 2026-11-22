@@ -2582,3 +2582,25 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .achievement-group.achievement-brands article{display:inline-block;vertical-align:top;width:calc(50% - 9px);margin-right:12px}
 .space-pages .achievement-group.achievement-brands article:nth-of-type(odd){margin-right:0}
 @media(max-width:700px){.space-pages .universe-banner{min-height:245px;padding:26px 22px}.space-pages .universe-banner>*:not(.universe-banner-group-photo){max-width:100%}.space-pages .universe-banner .universe-banner-group-photo{right:-10%;width:64%;height:66%;opacity:.32}.space-pages .achievement-group-grid{grid-template-columns:1fr}.space-pages .achievement-group.achievement-brands{grid-column:auto}.space-pages .achievement-group.achievement-brands article{width:100%;margin-right:0}.space-pages .archive-banner p{max-width:100%;padding-right:12px}}
+
+/* Archive song links and explicit LYKN banner image */
+.space-pages .universe-banner .universe-banner-group-photo{display:block!important;visibility:visible!important;opacity:1!important;position:absolute!important;z-index:2!important;right:0!important;bottom:0!important;width:min(47%,560px)!important;height:100%!important;max-width:none!important;object-fit:contain!important;object-position:center bottom!important;pointer-events:none}
+.space-pages .universe-banner>*:not(.universe-banner-group-photo){position:relative;z-index:3;max-width:57%}
+.space-pages .archive-banner .universe-banner-group-photo{right:0!important;width:min(45%,520px)!important;opacity:.95!important}
+.space-pages .archive-track-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:15px 0 26px}
+.space-pages .archive-track-card{position:relative;display:flex;flex-direction:column;overflow:hidden;min-width:0;border:1px solid rgba(176,164,239,.2);border-radius:15px;background:linear-gradient(145deg,#171d3a,#10172f);color:#f6f3ff;text-decoration:none;transition:transform .18s,border-color .18s}
+.space-pages .archive-track-card:hover{transform:translateY(-3px);border-color:rgba(194,174,255,.65)}
+.space-pages .archive-track-card>img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#090e20}
+.space-pages .archive-track-card>div{padding:12px 14px 14px}
+.space-pages .archive-track-card small{font-size:9px;letter-spacing:.12em;color:#bcaeff;font-weight:800}
+.space-pages .archive-track-card h3{font:700 14px/1.4 Poppins,sans-serif;color:#fff;margin:7px 0}
+.space-pages .archive-track-card>div>span{font-size:10px;color:#a9d9ff;font-weight:700}
+.space-pages .archive-track-play{position:absolute;top:calc(50% - 25px);left:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:43px;height:43px;border-radius:50%;background:rgba(10,13,31,.82);border:1px solid rgba(255,255,255,.55);color:#fff;font-size:15px;padding-left:3px}
+.space-pages .archive-link-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0 26px}
+.space-pages .archive-link-list>a{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:15px 17px;border:1px solid rgba(176,164,239,.18);border-radius:13px;background:linear-gradient(120deg,#171d3a,#11182f);color:#fff;text-decoration:none}
+.space-pages .archive-link-list>a:hover{border-color:rgba(194,174,255,.65);background:#20264a}
+.space-pages .archive-link-list b{display:block;font-size:13px}
+.space-pages .archive-link-list small{display:block;margin-top:5px;color:#adb8d4;font-size:10px;line-height:1.5}
+.space-pages .archive-link-list strong{white-space:nowrap;color:#c8b7ff;font-size:10px}
+@media(max-width:760px){.space-pages .archive-track-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.space-pages .archive-link-list{grid-template-columns:1fr}.space-pages .universe-banner .universe-banner-group-photo{right:-8%!important;width:68%!important;opacity:.42!important}.space-pages .universe-banner>*:not(.universe-banner-group-photo){max-width:100%}}
+@media(max-width:430px){.space-pages .archive-track-grid{grid-template-columns:1fr}}
