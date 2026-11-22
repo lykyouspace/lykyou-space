@@ -1181,6 +1181,26 @@ const verifiedMusicVideos = [
   {title:"ครั้งแรกพอทน (Not Again) (feat. Joke iScream)",year:"2026",id:"FS9htOhi24c"},
   {title:"คงต้องเป็นคนนี้ (Always Been)",year:"2026",id:"OGNDN-K8RY4"},
 ];
+const verifiedSoloSongs = [
+  {title:"จำได้ว่าลืม (Flashback)",artist:"WILLIAM",year:"2026",id:"Kq5ZmWrtnW8"},
+  {title:"ไม่รวยไม่คุย (Rich)",artist:"LEGO",year:"2026",id:"2dy89J7ROmQ"},
+  {title:"เทสดี (Tasty)",artist:"NUT",year:"2026",id:"fg5DGDB-frw"},
+  {title:"ถูกสเปก (Let's Go)",artist:"HONG",year:"2026",id:"CvTuWXb-8hk"},
+  {title:"ปล่อยใจ (Bloom)",artist:"TUI",year:"2026",id:"cqW6CfRZOlc"},
+];
+const verifiedOsts = [
+  {title:"All I Need",detail:"ThamePo: Heart That Skips a Beat OST · LYKN",year:"2024",id:"DBwgzhx1qW4"},
+  {title:"I Know You Want Me",detail:"ThamePo: Heart That Skips a Beat OST · LYKN",year:"2025",id:"JXrq3aOUZP8"},
+  {title:"จีบได้มั้ย (Would You Mind?)",detail:"ThamePo: Heart That Skips a Beat OST · LYKN",year:"2025",id:"PlOx16l8TUY"},
+  {title:"หูดับ (Who Says)",detail:"ThamePo: Heart That Skips a Beat OST · LYKN",year:"2025",id:"rpCVucZL0Gk"},
+  {title:"Fly High",detail:"ThamePo: Heart That Skips a Beat OST · LYKN",year:"2025",id:"C2msd9CqxYs"},
+];
+const verifiedDuets = [
+  {title:"ฉ่ำ (CHARM)",detail:"LYKN with Joong Archen & Pond Naravit · 2024",id:"EZ7AO_G0MkE"},
+  {title:"HUI LAY HUI",detail:"LYKN with SIZZY · 2023",id:"s3ehIJh88ec"},
+  {title:"หยอกไม่หลอก (TRICK OR TREAT)",detail:"LYKN feat. Chrrissa · 2024",id:"b0V35uxCnmY"},
+  {title:"ล็อกมง (You Shine I Choose)",detail:"LYKN feat. Bow Maylada · 2026",id:"rOnHI01ZP7k"},
+];
 const releaseAlbums = [
   {title:"DUSK & DAWN",year:"2025",detail:"Debut album · October 2025"},
   {title:"DUSK & DAWN (Japanese Deluxe)",year:"2026",detail:"Japanese deluxe edition · April 2026"},
@@ -1406,6 +1426,12 @@ function UniversePage({ setNotice, archive = false }: { setNotice: (message: str
     <SectionHeading eyebrow="THE MUSIC" title="Music videos" note="Watch official LYKN releases here without leaving LYKYOU Space."/>
     <div className="music-year-filters">{["All","2023","2024","2025","2026"].map(year=><button key={year} className={videoYear===year?"active":""} onClick={()=>setVideoYear(year)}>{year}</button>)}</div>
     <div className="music-video-grid">{verifiedMusicVideos.filter(video=>videoYear==="All"||video.year===videoYear).map(video=><article className="music-video-card" key={video.id}><button className="music-video-thumb" onClick={()=>setPlayingVideo(playingVideo===video.id?null:video.id)} aria-label={"Play "+video.title}>{playingVideo===video.id?<iframe src={"https://www.youtube-nocookie.com/embed/"+video.id+"?autoplay=1"} title={video.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen/>:<><img src={"https://img.youtube.com/vi/"+video.id+"/hqdefault.jpg"} alt="" loading="lazy"/><span className="music-play">▶</span></>}</button><div className="music-video-copy"><span className="eyebrow">{video.year} · OFFICIAL VIDEO</span><h3>{video.title}</h3></div></article>)}</div>
+    <SectionHeading eyebrow="MEMBER SOLO RELEASES" title="Five members. Five solo sounds." note="Official solo music videos, linked directly to the LYKN YouTube channel."/>
+    <div className="archive-track-grid">{verifiedSoloSongs.map(song=><a className="archive-track-card" key={song.id} href={"https://www.youtube.com/watch?v="+song.id} target="_blank" rel="noreferrer"><img src={"https://img.youtube.com/vi/"+song.id+"/hqdefault.jpg"} alt="" loading="lazy"/><span className="archive-track-play">▶</span><div><small>{song.artist} · {song.year} · SOLO</small><h3>{song.title}</h3><span>Watch on YouTube ↗</span></div></a>)}</div>
+    <SectionHeading eyebrow="DUETS & COLLABORATIONS" title="Together on one track" note="Official group collaborations and special-feature releases, with direct YouTube links."/>
+    <div className="archive-link-list">{verifiedDuets.map(song=><a key={song.id} href={"https://www.youtube.com/watch?v="+song.id} target="_blank" rel="noreferrer"><span><b>{song.title}</b><small>{song.detail}</small></span><strong>Watch on YouTube ↗</strong></a>)}</div>
+    <SectionHeading eyebrow="ORIGINAL SOUNDTRACKS" title="Songs for the stories" note="LYKN's ThamePo soundtrack tracks, linked to official music uploads."/>
+    <div className="archive-track-grid archive-ost-grid">{verifiedOsts.map(song=><a className="archive-track-card" key={song.id} href={"https://www.youtube.com/watch?v="+song.id} target="_blank" rel="noreferrer"><img src={"https://img.youtube.com/vi/"+song.id+"/hqdefault.jpg"} alt="" loading="lazy"/><span className="archive-track-play">▶</span><div><small>{song.year} · THAMEPO OST</small><h3>{song.title}</h3><span>Watch on YouTube ↗</span></div></a>)}</div>
     {byType("release").length>0&&<div className="universe-database-releases">{renderCards(byType("release"))}</div>}
     <SectionHeading eyebrow="ALBUMS & RELEASES" title="Discography" note="Albums and editions are listed separately from music videos."/>
     <div className="release-album-grid">{releaseAlbums.map(album=><article className="release-album-card" key={album.title}><span className="eyebrow">{album.year} · ALBUM</span><h3>{album.title}</h3><p>{album.detail}</p></article>)}</div>
