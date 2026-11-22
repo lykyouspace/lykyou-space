@@ -2275,3 +2275,21 @@ body { min-width: 320px; overflow-x: hidden; }
  .space-pages .hero-banner>.hero-group-photo{right:-9%;width:84%;height:56%;top:23%;transform:none;opacity:.46}
  .space-pages .hero-art{right:2%;top:64%;width:185px;height:185px;opacity:.8}
 }
+
+
+/* FINAL HOME TUNING — restore the purple/lavender palette and give the feed room. */
+.space-pages { --mint:#c4b5fd; }
+.space-pages .people-nav-avatar.tone-mint,
+.space-pages .quick-icon.tone-mint { background:rgba(196,181,253,.18)!important; color:#d8ccff!important; }
+.space-pages .hero-banner { background:radial-gradient(ellipse at 78% 15%,rgba(167,139,250,.24),transparent 44%),linear-gradient(125deg,#101735 0%,#1a1743 54%,#261a55 100%)!important; }
+@media(min-width:1121px){
+  .space-pages.app-shell { grid-template-columns:236px minmax(0,1fr) 260px!important; }
+  .space-pages.app-shell>.right-rail { width:260px!important; padding:22px 15px 24px!important; }
+  .space-pages.app-shell>.main-column { margin-right:0!important; min-width:0!important; }
+  .space-pages .page-content { max-width:none!important; padding-left:clamp(24px,2.4vw,40px)!important; padding-right:clamp(24px,2.4vw,40px)!important; }
+  .space-pages .home-columns { grid-template-columns:minmax(0,1.8fr) minmax(230px,.8fr)!important; gap:22px!important; }
+}
+@media(min-width:1500px){
+  .space-pages.app-shell { grid-template-columns:236px minmax(0,1fr) 275px!important; }
+  .space-pages.app-shell>.right-rail { width:275px!important; }
+}
