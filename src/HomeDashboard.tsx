@@ -126,7 +126,7 @@ const PREVIEW_HOME_DATA: HomeData = {
     { id: "tui", name: "TUI", color: "#F9A8D4", birthday: "23 Mar" },
   ],
   viewer: { displayName: "LYKYOU" },
-  heroImageUrl: "/images/lykyou-space-banner.webp",
+  heroImageUrl: "/images/lykn-group-hero.webp",
   chips: [
     { id: "members", label: "5 MEMBERS", icon: "star", tone: "amber" },
     { id: "space", label: "1 SPACE", icon: "cube", tone: "violet" },
