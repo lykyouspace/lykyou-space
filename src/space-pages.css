@@ -2241,3 +2241,7 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .hero-wolf,
 .space-pages .brand-wolf,
 .space-pages .promo-wolf { mix-blend-mode:screen !important; }
+
+/* Updated home hero: supplied five-member group image, with the mascot retained as a secondary brand mark. */
+.space-pages .hero-group-photo{position:absolute;z-index:0;right:-5%;top:50%;transform:translateY(-50%);width:min(54vw,590px);height:86%;object-fit:contain;object-position:center;filter:drop-shadow(0 18px 36px rgba(0,0,0,.38));border-radius:18px;opacity:.96}
+.space-pages .hero-art{z-index:1}.space-pages .hero-core{z-index:2}.space-pages .universe-project-filters{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}.space-pages .universe-project-filters button{border:1px solid var(--line);border-radius:999px;background:#171a2b;color:#c9c4e5;padding:8px 13px;font-size:11px}.space-pages .universe-project-filters button.active{border-color:#b9a4ff;background:#30284e;color:#fff}.space-pages .universe-project-sections{display:grid;gap:22px}.space-pages .universe-project-sections>section>h3{font:700 17px Manrope;color:#eee9ff;margin:0 0 12px}@media(max-width:700px){.space-pages .hero-group-photo{right:-15%;width:82%;height:52%;top:27%;transform:none;opacity:.45}.space-pages .hero-art{opacity:.85}}
