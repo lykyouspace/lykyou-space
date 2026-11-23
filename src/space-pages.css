@@ -3159,3 +3159,37 @@ body { min-width: 320px; overflow-x: hidden; }
   .space-pages .sidebar-promo { min-height:112px !important; margin:7px 2px !important; padding-top:10px !important; padding-bottom:10px !important; }
   .space-pages .sidebar-promo .promo-wolf { width:84px !important; height:90px !important; }
 }
+
+
+/* Preserve the already-correct homepage's independent fixed-sidebar layout
+   while the shared grid rules above repair every other route. */
+@media (min-width:901px) {
+  .space-pages.home-app-shell > .sidebar {
+    position:fixed !important;
+    inset:0 auto 0 0 !important;
+    width:244px !important;
+    height:100vh !important;
+    min-height:0 !important;
+    max-height:100vh !important;
+    overflow-y:auto !important;
+    grid-column:auto !important;
+    grid-row:auto !important;
+  }
+  .space-pages.home-app-shell > .home-main-column {
+    margin:0 0 0 244px !important;
+    width:auto !important;
+  }
+}
+@media (max-width:900px) {
+  .space-pages.home-app-shell > .sidebar {
+    position:fixed !important;
+    inset:0 auto 0 0 !important;
+    width:min(290px,86vw) !important;
+    height:100dvh !important;
+    transform:translateX(-110%) !important;
+  }
+  .space-pages.home-app-shell > .sidebar.sidebar-open {
+    transform:translateX(0) !important;
+  }
+  .space-pages.home-app-shell > .home-main-column { margin:0 !important; width:100% !important; }
+}
