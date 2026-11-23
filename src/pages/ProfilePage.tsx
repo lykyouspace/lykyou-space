@@ -85,7 +85,30 @@ export default function ProfilePage() {
           instagram: links.instagram ?? "", x: links.x ?? "", tiktok: links.tiktok ?? "", youtube: links.youtube ?? "",
         });
       }
-      if (data) { setAvatarUrl(data.avatar_url ?? ""); setCoverUrl(data.cover_url ?? ""); setForm({
+      if (data) {
+        setAvatarUrl(data.avatar_url ?? "");
+        setCoverUrl(data.cover_url ?? "");
+        // If an earlier profile save cleared the cover URL, try to recover the
+        // existing user's latest cover from their own storage folder.
+        if (!data.cover_url) {
+          const folder = "covers/" + user.id;
+          const { data: coverFiles, error: coverListError } = await supabase.storage
+            .from("space-media")
+            .list(folder, { limit: 100, sortBy: { column: "updated_at", order: "desc" } });
+          if (!coverListError) {
+            const latestCover = (coverFiles ?? []).find((file: any) =>
+              file.name.startsWith("cover-") && !file.name.endsWith("/")
+            );
+            if (latestCover) {
+              const recoveredPath = folder + "/" + latestCover.name;
+              const recoveredUrl = supabase.storage.from("space-media").getPublicUrl(recoveredPath).data.publicUrl;
+              const { error: recoverySaveError } = await supabase.from("profiles")
+                .update({ cover_url: recoveredUrl }).eq("id", user.id);
+              if (!recoverySaveError) setCoverUrl(recoveredUrl);
+            }
+          }
+        }
+        setForm({
         username: data.username ?? "",
         display_name: data.display_name ?? "",
         bio: data.bio ?? "",
