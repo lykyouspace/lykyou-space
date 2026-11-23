@@ -2604,3 +2604,18 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .archive-link-list strong{white-space:nowrap;color:#c8b7ff;font-size:10px}
 @media(max-width:760px){.space-pages .archive-track-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.space-pages .archive-link-list{grid-template-columns:1fr}.space-pages .universe-banner .universe-banner-group-photo{right:-8%!important;width:68%!important;opacity:.42!important}.space-pages .universe-banner>*:not(.universe-banner-group-photo){max-width:100%}}
 @media(max-width:430px){.space-pages .archive-track-grid{grid-template-columns:1fr}}
+
+
+/* Fun Zone game-card artwork: reuse the bundled group photo, no Supabase uploads. */
+.space-pages .game-card { overflow:hidden; padding-top:0; }
+.space-pages .game-art { position:relative; height:132px; margin:0 -17px 15px; overflow:hidden; background:#11132b; border-radius:15px 15px 0 0; }
+.space-pages .game-art img { display:block; width:100%; height:100%; object-fit:cover; object-position:center 34%; transform:scale(1.02); transition:transform .25s ease; }
+.space-pages .game-card:hover .game-art img { transform:scale(1.07); }
+.space-pages .game-art-shade { position:absolute; inset:0; background:linear-gradient(180deg,rgba(12,10,35,.04),rgba(12,10,35,.78)),linear-gradient(120deg,rgba(124,58,237,.32),transparent 65%); }
+.space-pages .game-icon { position:absolute; left:14px; bottom:12px; width:44px; height:44px; margin:0; display:grid; place-items:center; border:1px solid rgba(255,255,255,.3); border-radius:14px; background:rgba(14,12,39,.72); backdrop-filter:blur(8px); color:#f1eaff; }
+.space-pages .game-art-spark { position:absolute; right:15px; top:12px; color:#fff; font-size:22px; text-shadow:0 0 18px #c4b5fd; }
+.space-pages .game-card-pink .game-art-shade { background:linear-gradient(180deg,rgba(28,8,31,.02),rgba(28,8,31,.8)),linear-gradient(120deg,rgba(255,100,170,.35),transparent 70%); }
+.space-pages .game-card-mint .game-art-shade { background:linear-gradient(180deg,rgba(4,30,37,.02),rgba(4,30,37,.8)),linear-gradient(120deg,rgba(63,207,190,.32),transparent 70%); }
+.space-pages .game-card-orange .game-art-shade { background:linear-gradient(180deg,rgba(39,20,8,.02),rgba(39,20,8,.8)),linear-gradient(120deg,rgba(255,166,78,.34),transparent 70%); }
+.space-pages .game-card-blue .game-art-shade { background:linear-gradient(180deg,rgba(7,19,43,.02),rgba(7,19,43,.8)),linear-gradient(120deg,rgba(91,160,255,.34),transparent 70%); }
+@media(max-width:700px){.space-pages .game-art{height:116px}}
