@@ -2779,3 +2779,80 @@ body { min-width: 320px; overflow-x: hidden; }
   .space-pages .sidebar-promo { padding-right:92px !important; }
   .space-pages .sidebar-promo .promo-wolf { width:98px !important;height:84px !important;right:-2px !important;transform:scale(1.22); }
 }
+
+
+/* Sidebar refinements: readable compact community card with the five verified member photos. */
+.space-pages .sidebar .brand-lockup {
+  min-height:116px !important;
+  padding:8px 8px 14px !important;
+  margin-bottom:8px !important;
+  overflow:visible !important;
+}
+.space-pages .sidebar .brand-space-logo {
+  width:228px !important;
+  max-width:none !important;
+  height:104px !important;
+  max-height:104px !important;
+  transform:scale(1.08);
+  transform-origin:center center;
+}
+.space-pages .sidebar-promo {
+  min-height:0 !important;
+  margin:10px 1px 12px !important;
+  padding:12px 12px 11px !important;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  background:radial-gradient(circle at 100% 0,rgba(157,125,255,.19),transparent 52%),linear-gradient(140deg,#24203d,#171b2b) !important;
+}
+.space-pages .sidebar-promo .promo-member-row {
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:6px;
+  width:100%;
+  margin:0 0 2px;
+}
+.space-pages .sidebar-promo .promo-member-row img {
+  display:block;
+  width:100%;
+  aspect-ratio:1;
+  min-width:0;
+  border-radius:50%;
+  border:1px solid rgba(220,208,255,.62);
+  object-fit:cover;
+  object-position:center top;
+  box-shadow:0 3px 10px rgba(0,0,0,.28);
+}
+.space-pages .sidebar-promo strong {
+  display:block;
+  font:800 clamp(16px,1.1vw,18px)/1.2 Manrope !important;
+  letter-spacing:-.02em;
+  color:#fff;
+  overflow-wrap:normal;
+}
+.space-pages .sidebar-promo p {
+  margin:0 !important;
+  font-size:12px !important;
+  line-height:1.45 !important;
+  color:#c5c2dc !important;
+}
+.space-pages .sidebar-promo button {
+  margin-top:1px !important;
+  padding:5px 0 0 !important;
+  font-size:12px !important;
+  line-height:1.35 !important;
+}
+.space-pages .sidebar-promo .promo-orbit,
+.space-pages .sidebar-promo .promo-wolf { display:none !important; }
+@media(max-height:820px) and (min-width:651px) {
+  .space-pages .sidebar { overflow-y:auto; }
+  .space-pages .sidebar-spacer { flex:0 0 10px; }
+  .space-pages .sidebar-promo { margin-top:6px !important; }
+}
+@media(max-width:650px) {
+  .space-pages .sidebar .brand-lockup { min-height:100px !important;padding:7px 38px 10px 8px !important; }
+  .space-pages .sidebar .brand-space-logo { width:210px !important;height:92px !important;max-height:92px !important;transform:scale(1.04); }
+  .space-pages .sidebar-promo { padding:12px !important; }
+  .space-pages .sidebar-promo strong { font-size:17px !important; }
+  .space-pages .sidebar-promo p,.space-pages .sidebar-promo button { font-size:12px !important; }
+}
