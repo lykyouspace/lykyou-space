@@ -301,7 +301,7 @@ function SpacePages() {
       </nav>
       <div className="sidebar-divider"/>
       <div className="sidebar-label">YOUR PEOPLE</div>
-      {[{name:"WILLIAM",src:"William.webp.jpeg"},{name:"LEGO",src:"Lego.webp.jpeg"},{name:"NUT",src:"NUT.webp.jpeg"},{name:"HONG",src:"Hong.webp.jpeg"},{name:"TUI",src:"TUI.webp.jpg"}].map((member)=><button key={member.name} className="nav-link nav-button people-nav-link" onClick={()=>go("/lykn-universe?member="+member.name)}><img className="people-nav-photo" src={"/images/lykn-members/"+member.src} alt="" /><span>{member.name}</span><small>Fan hub</small></button>)}
+      {[{name:"WILLIAM",src:"William.webp.jpeg"},{name:"LEGO",src:"Lego.webp.jpeg"},{name:"NUT",src:"Nut.webp.jpeg"},{name:"HONG",src:"Hong.webp.jpeg"},{name:"TUI",src:"Tui.webp.jpeg"}].map((member)=><button key={member.name} className="nav-link nav-button people-nav-link" onClick={()=>go("/lykn-universe?member="+member.name)}><img className="people-nav-photo" src={"/images/lykn-members/"+member.src} alt="" /><span>{member.name}</span><small>Fan hub</small></button>)}
       <div className="sidebar-divider"/>
       <div className="sidebar-label">YOUR CORNER</div>
       <button className="nav-link nav-button" onClick={() => go("/members")}><Heart size={18}/><span>My Friends</span></button>
