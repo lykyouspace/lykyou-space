@@ -3038,3 +3038,124 @@ body { min-width: 320px; overflow-x: hidden; }
     transform:translateX(0);
   }
 }
+
+
+/* GLOBAL SHELL REPAIR — the sidebar, main content and optional right rail each
+   own one grid column. Never reserve the right-rail width again as a main margin. */
+@media (min-width:901px) {
+  .space-pages.app-shell {
+    display:grid !important;
+    grid-template-columns:244px minmax(0,1fr) 260px !important;
+    align-items:start !important;
+  }
+  .space-pages.app-shell > .sidebar {
+    grid-column:1 !important;
+    grid-row:1 !important;
+    position:sticky !important;
+    top:0 !important;
+    inset:auto !important;
+    width:244px !important;
+    height:100vh !important;
+    min-height:100vh !important;
+    max-height:100vh !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain;
+    scrollbar-width:thin !important;
+    scrollbar-color:rgba(196,181,253,.38) transparent !important;
+    padding:14px 14px 20px !important;
+    transform:none !important;
+  }
+  .space-pages.app-shell > .main-column {
+    grid-column:2 !important;
+    grid-row:1 !important;
+    width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+  }
+  .space-pages.app-shell > .right-rail {
+    grid-column:3 !important;
+    grid-row:1 !important;
+    width:260px !important;
+    min-width:0 !important;
+    margin:0 !important;
+  }
+}
+@media (min-width:901px) and (max-width:1120px) {
+  .space-pages.app-shell {
+    grid-template-columns:244px minmax(0,1fr) !important;
+  }
+  .space-pages.app-shell > .right-rail { display:none !important; }
+}
+@media (max-width:900px) {
+  .space-pages.app-shell { display:block !important; }
+  .space-pages.app-shell > .main-column {
+    width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+  }
+  .space-pages.app-shell > .sidebar {
+    position:fixed !important;
+    inset:0 auto 0 0 !important;
+    width:min(290px,86vw) !important;
+    height:100vh !important;
+    height:100dvh !important;
+    min-height:0 !important;
+    max-height:100dvh !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain;
+    scrollbar-width:thin !important;
+    scrollbar-color:rgba(196,181,253,.38) transparent !important;
+    padding:14px 16px 22px !important;
+  }
+}
+/* Short browser windows / split-screen: keep every sidebar item reachable. */
+.space-pages .sidebar-spacer { flex:0 0 12px !important; min-height:12px !important; }
+.space-pages .sidebar-bottom { flex:0 0 auto !important; margin-top:4px !important; padding-bottom:4px !important; }
+.space-pages .sidebar-promo {
+  position:relative !important;
+  display:block !important;
+  min-height:132px !important;
+  overflow:hidden !important;
+  padding:14px 96px 14px 13px !important;
+  margin:10px 2px 10px !important;
+}
+.space-pages .sidebar-promo .promo-wolf {
+  position:absolute !important;
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  z-index:2 !important;
+  width:96px !important;
+  height:104px !important;
+  right:2px !important;
+  top:50% !important;
+  bottom:auto !important;
+  transform:translateY(-50%) !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  background:transparent !important;
+  mix-blend-mode:normal !important;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.35)) !important;
+}
+.space-pages .sidebar-promo strong,
+.space-pages .sidebar-promo p,
+.space-pages .sidebar-promo button {
+  position:relative !important;
+  z-index:1 !important;
+  max-width:100% !important;
+}
+.space-pages .sidebar-promo strong { font-size:15px !important; line-height:1.25 !important; }
+.space-pages .sidebar-promo p { margin:7px 0 !important; font-size:10px !important; line-height:1.4 !important; }
+.space-pages .sidebar-promo button { font-size:10px !important; padding-top:3px !important; }
+@media (max-height:760px) and (min-width:901px) {
+  .space-pages.app-shell > .sidebar { padding-top:9px !important; padding-bottom:12px !important; }
+  .space-pages .sidebar .brand-lockup { min-height:88px !important; height:88px !important; margin-bottom:4px !important; }
+  .space-pages .sidebar .brand-space-logo { height:82px !important; max-height:82px !important; }
+  .space-pages .sidebar-label { padding-bottom:6px !important; }
+  .space-pages .sidebar-divider { margin:8px 7px !important; }
+  .space-pages .nav-link { min-height:35px !important; padding-top:6px !important; padding-bottom:6px !important; }
+  .space-pages .sidebar-promo { min-height:112px !important; margin:7px 2px !important; padding-top:10px !important; padding-bottom:10px !important; }
+  .space-pages .sidebar-promo .promo-wolf { width:84px !important; height:90px !important; }
+}
