@@ -2650,6 +2650,7 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .community-hero-stars { position:relative; z-index:1; }
 .space-pages .community-hero-banner::after { display:none; }
 .space-pages .bias-corner-hero { isolation:isolate; overflow:hidden; }
+.space-pages .bias-corner-hero { grid-template-columns:minmax(0,1fr); }
 .space-pages .bias-corner-banner-image { position:absolute; inset:0; z-index:-1; width:100%; height:100%; object-fit:cover; object-position:center; }
 .space-pages .bias-corner-hero::before { content:""; position:absolute; inset:0; z-index:0; background:linear-gradient(90deg,rgba(8,14,35,.84) 0%,rgba(11,17,39,.62) 48%,rgba(11,17,39,.14) 100%); pointer-events:none; }
 .space-pages .bias-corner-hero-copy,.space-pages .bias-corner-hero-art { position:relative; z-index:1; }
