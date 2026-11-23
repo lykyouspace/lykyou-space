@@ -195,6 +195,9 @@ export default function ProfilePage() {
           favourite_song: form.favourite_song.trim() || null,
           favourite_era: form.favourite_era.trim() || null,
           profile_visibility: form.profile_visibility,
+          // Keep uploaded media references when saving text/profile details.
+          avatar_url: avatarUrl || null,
+          cover_url: coverUrl || null,
         }),
         supabase.from("profile_private").upsert({
           user_id: user.id,
