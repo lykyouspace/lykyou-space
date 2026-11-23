@@ -2982,7 +2982,9 @@ body { min-width: 320px; overflow-x: hidden; }
   background:radial-gradient(ellipse at 80% 45%,rgba(176,145,255,.23),transparent 38%),linear-gradient(120deg,#171b3d,#2d2450 55%,#18334a) !important;
 }
 .space-pages .member-profile-cover {
-  background:radial-gradient(circle at 75% 15%,#a98cff66,transparent 35%),radial-gradient(circle at 20% 80%,#c4b5fd22,transparent 35%),linear-gradient(110deg,#17295b,#34245f 55%,#182448) !important;
+  /* Keep the galaxy gradient as the no-photo fallback. Uploaded cover images
+     are applied inline by the profile page and must not be overridden here. */
+  background:radial-gradient(circle at 75% 15%,#a98cff66,transparent 35%),radial-gradient(circle at 20% 80%,#c4b5fd22,transparent 35%),linear-gradient(110deg,#17295b,#34245f 55%,#182448);
 }
 
 
