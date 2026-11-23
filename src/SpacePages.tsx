@@ -301,7 +301,7 @@ function SpacePages() {
       </nav>
       <div className="sidebar-divider"/>
       <div className="sidebar-label">YOUR PEOPLE</div>
-      {["WILLIAM","LEGO","NUT","HONG","TUI"].map((member,index)=><button key={member} className="nav-link nav-button people-nav-link" onClick={()=>go("/lykn-universe?member="+member)}><span className={"people-nav-avatar tone-"+["lavender","mint","pink","blue","orange"][index]}>{member.slice(0,1)}</span><span>{member}</span><small>Fan hub</small></button>)}
+      {[{name:"WILLIAM",src:"William.webp.jpeg"},{name:"LEGO",src:"Lego.webp.jpeg"},{name:"NUT",src:"NUT.webp.jpeg"},{name:"HONG",src:"Hong.webp.jpeg"},{name:"TUI",src:"TUI.webp.jpg"}].map((member)=><button key={member.name} className="nav-link nav-button people-nav-link" onClick={()=>go("/lykn-universe?member="+member.name)}><img className="people-nav-photo" src={"/images/lykn-members/"+member.src} alt="" /><span>{member.name}</span><small>Fan hub</small></button>)}
       <div className="sidebar-divider"/>
       <div className="sidebar-label">YOUR CORNER</div>
       <button className="nav-link nav-button" onClick={() => go("/members")}><Heart size={18}/><span>My Friends</span></button>
@@ -312,7 +312,7 @@ function SpacePages() {
       <button className="nav-link nav-button" onClick={() => go(user ? "/settings" : "/login")}><Settings size={18}/><span>Settings</span></button>
       {isStaff && <><div className="sidebar-divider"/><div className="sidebar-label">STAFF</div><button className="nav-link nav-button" onClick={() => go("/admin")}><Shield size={18}/><span>Admin HQ</span></button></>}
       <div className="sidebar-spacer"/>
-      <div className="sidebar-promo"><div className="promo-member-row" aria-label="LYKN members">{[{name:"WILLIAM",src:"William.webp.jpeg"},{name:"LEGO",src:"Lego.webp.jpeg"},{name:"NUT",src:"NUT.webp.jpeg"},{name:"HONG",src:"Hong.webp.jpeg"},{name:"TUI",src:"TUI.webp.jpg"}].map((member)=><img key={member.name} src={"/images/lykn-members/"+member.src} alt={member.name} title={member.name}/>)}</div><strong>Your people.<br/>Your space.</strong><p>A place where every LYKYOU belongs.</p><button onClick={() => go("/fandom-hub")}>Explore the hub <ArrowRight size={14}/></button></div>
+      <div className="sidebar-promo"><img className="promo-wolf" src="/images/lykyou-wolf.webp" alt="LYKYOU Space WOLF mascot"/><div className="promo-orbit">✦</div><strong>Your people.<br/>Your space.</strong><p>A place where every LYKYOU belongs.</p><button onClick={() => go("/fandom-hub")}>Explore the hub <ArrowRight size={14}/></button></div>
       <div className="sidebar-bottom"><span className="online-dot"/> Independent fan community <span className="unofficial">UNOFFICIAL</span></div>
     </aside>
     {mobileOpen && <button className="mobile-scrim" aria-label="Close navigation" onClick={() => setMobileOpen(false)}/>}
