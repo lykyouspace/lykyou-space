@@ -2999,3 +2999,15 @@ body { min-width: 320px; overflow-x: hidden; }
   gap:0 !important;
 }
 .space-pages .home-page .feed-column { width:100%; max-width:none; }
+
+
+/* Homepage: the global right rail was still consuming 300px and squeezing every
+   section into a narrow center column. The homepage uses the full area beside
+   the left navigation; keep the right rail on all other pages. */
+.space-pages.home-app-shell { display:block !important; grid-template-columns:none !important; }
+.space-pages.home-app-shell > .home-main-column { margin-left:244px !important; margin-right:0 !important; width:auto !important; min-width:0 !important; }
+.space-pages.home-app-shell > .right-rail { display:none !important; }
+.space-pages.home-app-shell .home-main-column > .page-content { width:100% !important; max-width:none !important; margin:0 !important; padding-left:clamp(24px,2.4vw,42px) !important; padding-right:clamp(24px,2.4vw,42px) !important; }
+@media(max-width:900px) {
+  .space-pages.home-app-shell > .home-main-column { margin-left:0 !important; margin-right:0 !important; }
+}
