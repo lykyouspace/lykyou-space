@@ -2984,3 +2984,18 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .member-profile-cover {
   background:radial-gradient(circle at 75% 15%,#a98cff66,transparent 35%),radial-gradient(circle at 20% 80%,#c4b5fd22,transparent 35%),linear-gradient(110deg,#17295b,#34245f 55%,#182448) !important;
 }
+
+
+/* Homepage width correction: remove the two right-side promo panels and let the community feed use the full main column. */
+.space-pages .home-main-column .page-content {
+  width:100%;
+  max-width:none !important;
+  padding-left:clamp(22px,2.2vw,40px);
+  padding-right:clamp(22px,2.2vw,40px);
+}
+.space-pages .home-page .home-columns {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) !important;
+  gap:0 !important;
+}
+.space-pages .home-page .feed-column { width:100%; max-width:none; }
