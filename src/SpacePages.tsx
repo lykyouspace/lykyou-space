@@ -287,7 +287,7 @@ function SpacePages() {
     if (result.error) { setNotice(result.error.message); return; }
     await refreshFeed();
   };
-  return <div className="space-pages app-shell">
+  return <div className={location.pathname === "/" ? "space-pages app-shell home-app-shell" : "space-pages app-shell"}>
     <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}>
       <div className="brand-lockup" onClick={() => go("/")} role="button" tabIndex={0} aria-label="LYKYOU Space home">
         <img className="brand-space-logo" src="/lykyou-space-logo.png.png" alt="LYKYOU Space logo"/>
