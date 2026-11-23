@@ -3294,3 +3294,23 @@ body { min-width: 320px; overflow-x: hidden; }
 @media (min-width:901px) and (max-height:760px) {
   .space-pages.app-shell > .sidebar { padding-top:10px !important; padding-bottom:10px !important; }
 }
+
+
+/* LYKN page: interactive constellation timeline and linked project cards. */
+.space-pages .timeline-constellation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px;position:relative;margin:26px 0 42px;padding:8px 0}
+.space-pages .timeline-constellation:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(174,155,255,.58) 12%,rgba(125,211,252,.45) 88%,transparent);transform:translateX(-50%)}
+.space-pages .timeline-constellation-item{position:relative;display:flex;align-items:flex-start;gap:12px;width:100%;min-width:0;text-align:left;border:0;background:transparent;color:inherit;padding:0 18px 10px 0;cursor:pointer}
+.space-pages .timeline-constellation-item:nth-child(even){grid-column:2;padding:0 0 10px 18px;flex-direction:row-reverse;text-align:right}
+.space-pages .timeline-constellation-item:nth-child(odd){grid-column:1}
+.space-pages .timeline-constellation-item .timeline-marker{position:relative;z-index:2;flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(145deg,#28214c,#172b49);border:1px solid rgba(190,174,255,.5);color:#e5dcff;font:800 11px Poppins,sans-serif;box-shadow:0 0 22px rgba(124,58,237,.18)}
+.space-pages .timeline-card{display:flex;flex:1;min-width:0;flex-direction:column;gap:8px;padding:15px 17px;border-radius:17px;border:1px solid rgba(176,164,239,.2);background:linear-gradient(145deg,rgba(28,31,63,.96),rgba(15,25,48,.96));transition:transform .2s,border-color .2s,box-shadow .2s}
+.space-pages .timeline-constellation-item:hover .timeline-card,.space-pages .timeline-constellation-item.is-open .timeline-card{transform:translateY(-3px);border-color:rgba(190,174,255,.7);box-shadow:0 12px 30px rgba(4,8,24,.25)}
+.space-pages .timeline-card strong{font:700 15px/1.4 Poppins,sans-serif;color:#fff}
+.space-pages .timeline-card .eyebrow{color:#c5b8ff;font-size:9px;letter-spacing:.1em}
+.space-pages .timeline-detail{font-size:12px;line-height:1.65;color:#d0d8eb}
+.space-pages .timeline-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#9edcff;font-size:10px;font-weight:800}
+.space-pages .timeline-constellation-item:nth-child(even) .timeline-toggle{flex-direction:row-reverse}
+.space-pages .timeline-year-filters{margin-top:18px}
+.space-pages .universe-content-card .universe-card-source{display:inline-flex;align-items:center;gap:7px;margin-top:10px;color:#a9d9ff;font-size:11px;font-weight:800;text-decoration:none}
+.space-pages .universe-content-card .universe-card-source:hover{color:#d8c9ff;text-decoration:underline}
+@media(max-width:700px){.space-pages .timeline-constellation{grid-template-columns:1fr;gap:12px}.space-pages .timeline-constellation:before{left:21px}.space-pages .timeline-constellation-item,.space-pages .timeline-constellation-item:nth-child(even){grid-column:1;padding:0 0 8px;flex-direction:row;text-align:left}.space-pages .timeline-constellation-item:nth-child(even) .timeline-toggle{flex-direction:row}}
