@@ -2619,3 +2619,13 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .game-card-orange .game-art-shade { background:linear-gradient(180deg,rgba(39,20,8,.02),rgba(39,20,8,.8)),linear-gradient(120deg,rgba(255,166,78,.34),transparent 70%); }
 .space-pages .game-card-blue .game-art-shade { background:linear-gradient(180deg,rgba(7,19,43,.02),rgba(7,19,43,.8)),linear-gradient(120deg,rgba(91,160,255,.34),transparent 70%); }
 @media(max-width:700px){.space-pages .game-art{height:116px}}
+
+/* Homepage uses the supplied full-bleed artwork; keep the entire composition visible. */
+.space-pages .hero-banner { background:#111326; }
+.space-pages .hero-banner > .hero-group-photo { content-visibility:auto; }
+.space-pages .hero-banner > .hero-art { display:none; }
+.space-pages .hero-banner > .hero-bottom-note { display:none; }
+.space-pages .hero-banner > .hero-group-photo { right:0; top:0; transform:none; width:100%; height:100%; max-width:none; object-fit:contain; object-position:center right; opacity:1; filter:none; border-radius:0; }
+.space-pages .hero-banner > .hero-copy { z-index:2; max-width:48%; padding:8px 0; }
+.space-pages .hero-banner > .hero-copy h1, .space-pages .hero-banner > .hero-copy p, .space-pages .hero-banner > .hero-copy .hero-proof { text-shadow:0 2px 18px rgba(8,9,22,.7); }
+@media(max-width:700px){ .space-pages .hero-banner { min-height:430px; padding:25px 22px; align-items:flex-start; background:#111326; } .space-pages .hero-banner > .hero-group-photo { width:100%; height:100%; right:0; top:0; object-fit:contain; object-position:center bottom; opacity:.82; } .space-pages .hero-banner > .hero-copy { max-width:100%; padding:0; } .space-pages .hero-banner > .hero-copy p { max-width:330px; } }
