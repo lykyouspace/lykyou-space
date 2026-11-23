@@ -312,7 +312,7 @@ function SpacePages() {
       <button className="nav-link nav-button" onClick={() => go(user ? "/settings" : "/login")}><Settings size={18}/><span>Settings</span></button>
       {isStaff && <><div className="sidebar-divider"/><div className="sidebar-label">STAFF</div><button className="nav-link nav-button" onClick={() => go("/admin")}><Shield size={18}/><span>Admin HQ</span></button></>}
       <div className="sidebar-spacer"/>
-      <div className="sidebar-promo"><img className="promo-wolf" src="/images/lykyou-wolf.webp" alt="LYKYOU Space WOLF mascot"/><div className="promo-orbit">✦</div><strong>Your people.<br/>Your space.</strong><p>A place where every LYKYOU belongs.</p><button onClick={() => go("/fandom-hub")}>Explore the hub <ArrowRight size={14}/></button></div>
+      <div className="sidebar-promo"><div className="sidebar-promo-copy"><strong>Your people.<br/>Your space.</strong><p>Made for LYKYOUs, everywhere.</p><button onClick={() => go("/fandom-hub")}>Explore the hub <ArrowRight size={14}/></button></div><img className="promo-wolf" src="/images/lykyou-wolf.webp" alt="LYKYOU Space WOLF mascot"/></div>
       <div className="sidebar-bottom"><span className="online-dot"/> Independent fan community <span className="unofficial">UNOFFICIAL</span></div>
     </aside>
     {mobileOpen && <button className="mobile-scrim" aria-label="Close navigation" onClick={() => setMobileOpen(false)}/>}
