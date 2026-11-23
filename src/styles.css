@@ -1082,3 +1082,38 @@ img { display: block; }
   .hero-planet { right: -2%; top: 26px; transform: scale(.78); transform-origin: right top; opacity: 1; }
   .hero-planet .mascot { --s: 112px !important; width:112px; height:94px; }
 }
+
+
+/* Supplied homepage hero artwork: preserve its full 1717×916 composition. */
+.hero {
+  min-height: 0;
+  aspect-ratio: 1717 / 916;
+  padding: clamp(22px, 3.2vw, 42px);
+  background: #07091d;
+}
+.hero-bg { background: #07091d; }
+.hero-stars, .hero-bg .orb, .hero-bg .spark { display: none !important; }
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  mix-blend-mode: normal !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+.hero-copy { max-width: 43%; z-index: 3; }
+.hero-planet { display: none !important; }
+.hero-chips { z-index: 3; }
+@media (max-width: 700px) {
+  .hero { min-height: 250px; aspect-ratio: auto; padding: 20px 18px 16px; }
+  .hero-copy { max-width: 48%; }
+  .hero-copy h1 { font-size: clamp(24px, 7vw, 32px); }
+  .hero-sub { font-size: 11px; }
+  .hero-chips { gap: 6px; margin-top: 14px; }
+  .hero-chips .chip { height: 30px; padding: 0 8px; font-size: 10px; }
+}
