@@ -2724,3 +2724,40 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .word-game-entry input:focus {border-color:#a7f3d0;box-shadow:0 0 0 3px rgba(167,243,208,.12);}
 .space-pages .word-game-entry input::placeholder {color:#9ca9b9;}
 .space-pages .word-game-entry .button-primary {min-height:48px;padding:12px 22px;font-size:14px;}
+
+
+/* Sidebar brand: give the supplied logo a dedicated, centered area. */
+.space-pages .sidebar .brand-lockup {
+  position:relative !important;
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-height:104px !important;
+  padding:14px 18px 18px !important;
+  margin:0 0 12px !important;
+  gap:0 !important;
+  box-sizing:border-box !important;
+  text-align:center !important;
+}
+.space-pages .sidebar .brand-space-logo {
+  display:block !important;
+  flex:0 0 auto !important;
+  width:min(100%,214px) !important;
+  max-width:214px !important;
+  height:82px !important;
+  max-height:82px !important;
+  margin:0 auto !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+}
+.space-pages .sidebar .brand-lockup .sidebar-close {
+  position:absolute !important;
+  top:5px !important;
+  right:5px !important;
+}
+@media(max-width:650px) {
+  .space-pages .sidebar .brand-lockup { min-height:88px !important;padding:10px 38px 12px 12px !important; }
+  .space-pages .sidebar .brand-space-logo { width:min(100%,190px) !important;max-width:190px !important;height:68px !important;max-height:68px !important; }
+}
