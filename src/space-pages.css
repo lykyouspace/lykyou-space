@@ -2629,3 +2629,11 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .hero-banner > .hero-copy { z-index:2; max-width:48%; padding:8px 0; }
 .space-pages .hero-banner > .hero-copy h1, .space-pages .hero-banner > .hero-copy p, .space-pages .hero-banner > .hero-copy .hero-proof { text-shadow:0 2px 18px rgba(8,9,22,.7); }
 @media(max-width:700px){ .space-pages .hero-banner { min-height:430px; padding:25px 22px; align-items:flex-start; background:#111326; } .space-pages .hero-banner > .hero-group-photo { width:100%; height:100%; right:0; top:0; object-fit:contain; object-position:center bottom; opacity:.82; } .space-pages .hero-banner > .hero-copy { max-width:100%; padding:0; } .space-pages .hero-banner > .hero-copy p { max-width:330px; } }
+
+/* The supplied homepage artwork is 1717:916; match the hero container to its ratio so the entire image fills without letterboxing. */
+.space-pages .hero-banner { position:relative; aspect-ratio:1717 / 916; min-height:0; height:auto; padding:clamp(24px,3vw,40px); overflow:hidden; background:#111326; }
+.space-pages .hero-banner > .hero-group-photo { position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; object-position:center; transform:none; border-radius:0; opacity:1; filter:none; z-index:1; }
+.space-pages .hero-banner > .hero-copy { position:relative; z-index:2; max-width:48%; }
+.space-pages .hero-banner > .hero-art, .space-pages .hero-banner > .hero-bottom-note { display:none !important; }
+.space-pages .game-art img { object-fit:cover; object-position:center; transform:none; }
+@media(max-width:700px){ .space-pages .hero-banner { aspect-ratio:auto; min-height:430px; padding:24px 20px; } .space-pages .hero-banner > .hero-group-photo { object-fit:contain; object-position:center bottom; opacity:.92; } .space-pages .hero-banner > .hero-copy { max-width:100%; } }
