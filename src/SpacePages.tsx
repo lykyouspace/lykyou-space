@@ -289,8 +289,8 @@ function SpacePages() {
   };
   return <div className="space-pages app-shell">
     <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}>
-      <div className="brand-lockup" onClick={() => go("/")} role="button" tabIndex={0}>
-        <img className="brand-wolf" src="/images/lykyou-wolf.webp" alt="LYKN India Fanclub wolf mascot"/><div><strong>LYKYOU <i>SPACE</i></strong><small>YOUR FANDOM UNIVERSE</small></div>
+      <div className="brand-lockup" onClick={() => go("/")} role="button" tabIndex={0} aria-label="LYKYOU Space home">
+        <img className="brand-space-logo" src="/lykyou-space-logo.png.png" alt="LYKYOU Space logo"/>
         <button className="icon-button sidebar-close" aria-label="Close menu" onClick={() => setMobileOpen(false)}><X size={19}/></button>
       </div>
       <div className="sidebar-label">YOUR SPACE</div>
@@ -398,7 +398,7 @@ function CommunityPage({ posts, userId, editPost, deletePost, liked, toggleLike,
 
   return (
     <>
-      <section className="community-hero-banner"><div><span className="eyebrow">SHARE · CONNECT · SUPPORT · GROW</span><h2>LYKYOU <em>Community</em></h2><p>Different countries. Same love. LYKN.</p></div><div className="community-hero-stars">✦　✧　✦</div></section>
+      <section className="community-hero-banner"><img className="community-hero-image" src="/community-banner.webp.png" alt="" aria-hidden="true"/><div className="community-hero-copy"><span className="eyebrow">SHARE · CONNECT · SUPPORT · GROW</span><h2>LYKYOU <em>Community</em></h2><p>Different countries. Same love. LYKN.</p></div><div className="community-hero-stars">✦　✧　✦</div></section>
       <SectionHeading
         eyebrow="YOUR PEOPLE, YOUR CONVERSATIONS"
         title="The Community"
@@ -1137,7 +1137,7 @@ function BiasCornerPage() {
     await loadPosts();
   }
   return <>
-    <section className={"bias-corner-hero bias-hero-"+activeSpace.toLowerCase()}><div className="bias-corner-hero-copy"><div className="eyebrow">YOUR FAVOURITES · YOUR PEOPLE</div><h2>Bias Corner</h2><p>Six dedicated spaces for member appreciation, fan photos, edits, memories and OT5 love.</p><button className="button-primary" onClick={()=>document.querySelector(".bias-post-composer textarea")?.scrollIntoView({behavior:"smooth",block:"center"})}>Share in {activeSpace==="OT5"?"OT5":activeSpace+"'s"} space <ArrowRight size={15}/></button></div><div className="bias-corner-hero-art"><div className="bias-corner-orbit"><span>✦　♡　✧</span><strong>{activeSpace}</strong><span>✧　♡　✦</span></div><img src="/images/lykyou-wolf.webp" alt="WOLF mascot"/></div></section>
+    <section className={"bias-corner-hero bias-hero-"+activeSpace.toLowerCase()}><img className="bias-corner-banner-image" src="/bias-corner-banner.webp.png" alt="" aria-hidden="true"/><div className="bias-corner-hero-copy"><div className="eyebrow">YOUR FAVOURITES · YOUR PEOPLE</div><h2>Bias Corner</h2><p>Six dedicated spaces for member appreciation, fan photos, edits, memories and OT5 love.</p><button className="button-primary" onClick={()=>document.querySelector(".bias-post-composer textarea")?.scrollIntoView({behavior:"smooth",block:"center"})}>Share in {activeSpace==="OT5"?"OT5":activeSpace+"'s"} space <ArrowRight size={15}/></button></div><div className="bias-corner-hero-art"><div className="bias-corner-orbit"><span>✦　♡　✧</span><strong>{activeSpace}</strong><span>✧　♡　✦</span></div></div></section>
     <section className="bias-community-feed">
       <SectionHeading eyebrow="SIX SPACES · ONE FANDOM" title="Choose your corner" note="Each member has a separate fan space. OT5 is the shared home for all five."/>
       <div className="bias-space-tabs" role="tablist" aria-label="Bias Corner spaces">{spaces.map(space=><button type="button" role="tab" aria-selected={activeSpace===space.id} className={"bias-space-tab tone-"+space.tone+(activeSpace===space.id?" active":"")} key={space.id} onClick={()=>setActiveSpace(space.id)}><span>{space.label}</span><small>{space.id==="OT5"?"All five":"Member space"}</small></button>)}</div>
