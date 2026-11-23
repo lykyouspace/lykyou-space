@@ -3314,3 +3314,63 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .universe-content-card .universe-card-source{display:inline-flex;align-items:center;gap:7px;margin-top:10px;color:#a9d9ff;font-size:11px;font-weight:800;text-decoration:none}
 .space-pages .universe-content-card .universe-card-source:hover{color:#d8c9ff;text-decoration:underline}
 @media(max-width:700px){.space-pages .timeline-constellation{grid-template-columns:1fr;gap:12px}.space-pages .timeline-constellation:before{left:21px}.space-pages .timeline-constellation-item,.space-pages .timeline-constellation-item:nth-child(even){grid-column:1;padding:0 0 8px;flex-direction:row;text-align:left}.space-pages .timeline-constellation-item:nth-child(even) .timeline-toggle{flex-direction:row}}
+
+
+/* Homepage width safeguard: keep the full content canvas beside the fixed sidebar.
+   Scope every rule to the home shell so inner pages retain their own layout. */
+.space-pages.home-app-shell{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  overflow-x:clip;
+}
+.space-pages.home-app-shell > .home-main-column{
+  display:block !important;
+  box-sizing:border-box !important;
+  width:calc(100% - 244px) !important;
+  max-width:none !important;
+  min-width:0 !important;
+  margin:0 0 0 244px !important;
+}
+.space-pages.home-app-shell > .home-main-column > .page-content{
+  display:block !important;
+  box-sizing:border-box !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding-left:clamp(24px,2.4vw,42px) !important;
+  padding-right:clamp(24px,2.4vw,42px) !important;
+}
+.space-pages.home-app-shell .home-page{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+}
+.space-pages.home-app-shell .home-page > .hero-banner,
+.space-pages.home-app-shell .home-page > .welcome-strip,
+.space-pages.home-app-shell .home-page > .quick-grid,
+.space-pages.home-app-shell .home-page > .home-discovery,
+.space-pages.home-app-shell .home-page > .home-columns{
+  width:100% !important;
+  max-width:none !important;
+}
+.space-pages.home-app-shell .home-page > .home-columns{
+  grid-template-columns:minmax(0,1fr) !important;
+  gap:0 !important;
+}
+.space-pages.home-app-shell .home-page .feed-column{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+}
+@media(max-width:900px){
+  .space-pages.home-app-shell > .home-main-column{
+    width:100% !important;
+    margin:0 !important;
+  }
+  .space-pages.home-app-shell > .home-main-column > .page-content{
+    padding-left:20px !important;
+    padding-right:20px !important;
+  }
+}
