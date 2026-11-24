@@ -51,3 +51,16 @@
 .music-link-grid a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;border:1px solid rgba(180,168,230,.15);border-radius:10px;background:#ffffff05;color:#d5caff;font-size:10px;font-weight:750}
 .music-official-links{display:grid;gap:10px;padding-top:13px;border-top:1px solid rgba(180,168,230,.12)}
 .music-platform-panel>small{color:#9693ae;font-size:9px;line-height:1.6}
+
+.music-content-search,.music-calendar-panel{display:grid;gap:12px}
+.music-content-filters{display:flex;flex-wrap:wrap;gap:6px}
+.music-content-filters button{padding:7px 10px;border:1px solid rgba(180,168,230,.16);border-radius:999px;background:#ffffff05;color:#bdb8d2;font-size:9px;font-weight:750}
+.music-content-filters button.active{border-color:#bca8ff;background:rgba(167,139,250,.16);color:#f1eaff}
+.music-content-list,.music-calendar-list{display:grid;gap:7px}
+.music-content-list article,.music-calendar-list article{display:flex;align-items:center;gap:11px;padding:11px;border:1px solid rgba(180,168,230,.12);border-radius:10px;background:#ffffff04}
+.music-content-list article>div,.music-calendar-list article>div{display:grid;gap:4px;flex:1;min-width:0}
+.music-content-list strong,.music-calendar-list strong{color:#f1edff;font-size:11px}
+.music-content-list span,.music-calendar-list span{color:#aaa6c1;font-size:9px}
+.music-content-list p{margin:0;color:#aaa6c1;font-size:9px;line-height:1.5}
+.music-content-list article>a,.music-calendar-list article>a{display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:8px;background:#ffffff08;color:#c9baff}
+.music-calendar-list time{flex:none;width:85px;color:#c4b5fd;font-size:10px;font-weight:800}
