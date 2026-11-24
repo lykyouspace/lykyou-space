@@ -41,6 +41,9 @@ export default function MusicHubPage() {
   const [query, setQuery] = useState("");
   const controllerRef = useRef<any>(null);
   const countedRef = useRef<Set<string>>(new Set());
+  const pendingPlayTimerRef = useRef<number | null>(null);
+  const activeTrackRef = useRef("");
+  const activePlayingRef = useRef(false);
   const playerHostRef = useRef<HTMLDivElement>(null);
   const today = istToday();
   const weekStart = mondayOf(today);
@@ -72,40 +75,70 @@ export default function MusicHubPage() {
     if (!playerHostRef.current) return;
     let alive = true;
     let embed: any = null;
+    const clearPendingTimer = () => {
+      if (pendingPlayTimerRef.current !== null) window.clearTimeout(pendingPlayTimerRef.current);
+      pendingPlayTimerRef.current = null;
+    };
+    const recordEligiblePlay = async (uri: string) => {
+      if (!client || !user || countedRef.current.has(uri)) return;
+      countedRef.current.add(uri);
+      const id = spotifyTrackId(uri);
+      const trackUrl = "https://open.spotify.com/track/" + id;
+      let title = "LYKN track";
+      let artist = "LYKN";
+      let artwork: string | null = null;
+      try {
+        const response = await fetch("https://open.spotify.com/oembed?url=" + encodeURIComponent(trackUrl));
+        if (response.ok) {
+          const metadata = await response.json();
+          title = String(metadata.title ?? title).slice(0, 180);
+          artist = String(metadata.author_name ?? artist).slice(0, 120);
+          artwork = typeof metadata.thumbnail_url === "string" ? metadata.thumbnail_url : null;
+        }
+      } catch { /* Listening can still be recorded with a safe fallback title. */ }
+      const { error: listenError } = await client.rpc("record_music_listen", {
+        p_track_uri: uri, p_title: title, p_artist: artist, p_artwork_url: artwork,
+      });
+      if (listenError) setError(listenError.message);
+      else {
+        setLastPlayed(title);
+        setMessage("Your listen was counted after 30 seconds of continuous playback. One eligible play per song, per member, per day.");
+        void refresh();
+      }
+    };
+    const scheduleEligiblePlay = (uri: string) => {
+      if (!uri.startsWith("spotify:track:") || !user || !client || countedRef.current.has(uri)) return;
+      activeTrackRef.current = uri;
+      activePlayingRef.current = true;
+      if (pendingPlayTimerRef.current !== null) return;
+      pendingPlayTimerRef.current = window.setTimeout(() => {
+        pendingPlayTimerRef.current = null;
+        if (activePlayingRef.current && activeTrackRef.current === uri && !countedRef.current.has(uri)) {
+          void recordEligiblePlay(uri);
+        }
+      }, 30000);
+    };
     const setup = (api: any) => {
       if (!alive || !playerHostRef.current || controllerRef.current) return;
       api.createController(playerHostRef.current, { uri: SPOTIFY_URI, width: "100%", height: "352" }, (created: any) => {
         if (!alive) { created.destroy?.(); return; }
         embed = created;
         controllerRef.current = created;
-        created.addListener("playback_update", async (event: any) => {
+        created.addListener("playback_started", (event: any) => {
+          const uri = String(event?.data?.playingURI ?? "");
+          if (uri !== activeTrackRef.current) clearPendingTimer();
+          scheduleEligiblePlay(uri);
+        });
+        created.addListener("playback_update", (event: any) => {
           const data = event?.data;
           const uri = String(data?.playingURI ?? "");
-          if (!uri.startsWith("spotify:track:") || data?.isPaused || data?.isBuffering || Number(data?.position ?? 0) < 30000 || countedRef.current.has(uri) || !user || !client) return;
-          countedRef.current.add(uri);
-          const id = spotifyTrackId(uri);
-          const trackUrl = "https://open.spotify.com/track/" + id;
-          let title = "LYKN track";
-          let artist = "LYKN";
-          let artwork: string | null = null;
-          try {
-            const response = await fetch("https://open.spotify.com/oembed?url=" + encodeURIComponent(trackUrl));
-            if (response.ok) {
-              const metadata = await response.json();
-              title = String(metadata.title ?? title).slice(0, 180);
-              artist = String(metadata.author_name ?? artist).slice(0, 120);
-              artwork = typeof metadata.thumbnail_url === "string" ? metadata.thumbnail_url : null;
-            }
-          } catch { /* Listening can still be recorded with a safe fallback title. */ }
-          const { error: listenError } = await client.rpc("record_music_listen", {
-            p_track_uri: uri, p_title: title, p_artist: artist, p_artwork_url: artwork,
-          });
-          if (listenError) setError(listenError.message);
-          else {
-            setLastPlayed(title);
-            setMessage("Your listen was counted after 30 seconds of playback. One eligible play per song, per member, per day.");
-            void refresh();
+          if (data?.isPaused || data?.isBuffering) {
+            activePlayingRef.current = false;
+            clearPendingTimer();
+            return;
           }
+          if (uri && uri !== activeTrackRef.current) clearPendingTimer();
+          if (uri) scheduleEligiblePlay(uri);
         });
       });
     };
@@ -121,6 +154,8 @@ export default function MusicHubPage() {
     }
     return () => {
       alive = false;
+      activePlayingRef.current = false;
+      clearPendingTimer();
       try { embed?.destroy?.(); } catch { /* Ignore teardown errors from a removed embed. */ }
       controllerRef.current = null;
     };
