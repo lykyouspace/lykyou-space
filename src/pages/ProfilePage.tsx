@@ -355,7 +355,7 @@ export default function ProfilePage() {
         </div>
         <label>Profile visibility<select value={form.profile_visibility} onChange={(e) => setForm({...form, profile_visibility:e.target.value as ProfileForm["profile_visibility"]})}><option value="public">Public — anyone can view</option><option value="members">Members only</option><option value="private">Private — only you and authorised staff</option></select></label>
         <div className="profile-private-section">
-          <div><strong>Optional details</strong><span>These details are stored separately and are visible only to you and authorised platform admins.</span></div>
+          <div><strong>Optional details</strong><span>These details are stored separately and are visible only to you and authorised platform admins, except your country can be included in anonymous aggregate counts if you opt in below.</span></div>
           <div className="profile-two-col">
             <label>City<input value={privateForm.city} onChange={(e)=>setPrivateForm({...privateForm,city:e.target.value})} maxLength={80}/></label>
             <label>State / region<input value={privateForm.state} onChange={(e)=>setPrivateForm({...privateForm,state:e.target.value})} maxLength={80}/></label>
