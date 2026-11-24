@@ -77,3 +77,17 @@
 .fandom-capsule-locked strong,.fandom-capsule-open strong{color:#f4f0ff;font-size:12px}
 .fandom-capsule-open p{padding:12px;border-radius:9px;background:#ffffff08;color:#eee8ff;white-space:pre-wrap}
 @media(max-width:760px){.fandom-lab-hero{padding:20px}.fandom-lab-hero>svg{display:none}.fandom-lab-two-col{grid-template-columns:1fr}.fandom-lab-era>div{grid-template-columns:1fr}.fandom-crossword-clues{grid-template-columns:1fr}.fandom-mission-grid{grid-template-columns:1fr}.fandom-memory-list article{grid-template-columns:85px 1fr}.fandom-bingo-grid button{min-height:68px;font-size:8px}}
+
+.fandom-crossword-layout{display:grid;grid-template-columns:max-content minmax(220px,1fr);gap:22px;align-items:start}
+.fandom-crossword-grid{display:grid;gap:3px;padding:10px;border:1px solid rgba(180,168,230,.16);border-radius:12px;background:#0c1020;overflow:auto}
+.fandom-crossword-row{display:grid;grid-template-columns:repeat(11,34px);gap:3px}
+.fandom-crossword-row input{width:34px;height:34px;min-width:0;padding:0;border:1px solid rgba(187,169,255,.35);border-radius:5px;background:#24213e;color:#fff;text-align:center;text-transform:uppercase;font:800 13px Poppins,sans-serif}
+.fandom-crossword-row input:focus{outline:2px solid #c4b5fd;outline-offset:1px}
+.fandom-crossword-block{width:34px;height:34px;border-radius:4px;background:#080b16}
+.fandom-crossword-clues{display:grid;grid-template-columns:1fr;gap:7px}
+.fandom-crossword-clues>div{display:grid;grid-template-columns:72px minmax(0,1fr) auto;align-items:center;gap:8px;padding:9px 10px;border:1px solid rgba(180,168,230,.13);border-radius:9px;background:#ffffff04}
+.fandom-crossword-clues b{color:#c4b5fd;font-size:9px}
+.fandom-crossword-clues span{color:#d7d2e9;font-size:10px;line-height:1.4}
+.fandom-crossword-clues small{color:#aaa6c2;font-size:9px;white-space:nowrap}
+.fandom-lab-actions{display:flex;flex-wrap:wrap;gap:8px}
+@media(max-width:760px){.fandom-crossword-layout{grid-template-columns:1fr}.fandom-crossword-grid{max-width:100%;overflow-x:auto}.fandom-crossword-clues>div{grid-template-columns:65px minmax(0,1fr) auto}}
