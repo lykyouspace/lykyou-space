@@ -602,6 +602,12 @@ function FunZonePage() {
   const [memoryDeck,setMemoryDeck] = useState<string[]>(["W","L","N","H","T","OT5","W","L","N","H","T","OT5"]);
   const [memoryOpen,setMemoryOpen] = useState<number[]>([]);
   const [memoryMatched,setMemoryMatched] = useState<string[]>([]);
+  const [quizDifficulty,setQuizDifficulty] = useState("Standard");
+  const [timedMode,setTimedMode] = useState(false);
+  const [timeLeft,setTimeLeft] = useState(60);
+  const [quizOrder,setQuizOrder] = useState<any[]>([]);
+  const [leaderboard,setLeaderboard] = useState<any[]>([]);
+  const [leaderboardGame,setLeaderboardGame] = useState("quiz_arena");
   const thisOrThat = [
     { prompt: "Your ideal fandom evening?", a: "Rewatch live stages", b: "Build a LYKN playlist" },
     { prompt: "Pick your kind of fan project", a: "A creative edit", b: "A community event" },
@@ -642,6 +648,8 @@ function FunZonePage() {
   const dailyTasks = ["Share a favourite LYKN performance and say why it matters to you.","Find a LYKYOU with a different bias and start a friendly conversation.","Make a five-song playlist for a friend who is new to LYKN.","Celebrate all five members with one positive message.","Share a fandom memory that still makes you smile."];
   const dayNumber = Math.floor(Date.now()/86400000);
   const dailyTask = dailyTasks[dayNumber % dailyTasks.length];
+  const activeQuiz = (quizOrder.length ? quizOrder : quiz).filter((_:any,index:number) => quizDifficulty==="Casual" ? index<5 : quizDifficulty==="Expert" ? index>=6 : true);
+  const weeklyStart = (()=>{const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date()).split("-").map(Number);const date=new Date(Date.UTC(parts[0],parts[1]-1,parts[2]));date.setUTCDate(date.getUTCDate()-((date.getUTCDay()+6)%7));return date.toISOString().slice(0,10);})();
   async function loadRewards(){
     if(!user||!supabase){setStardust(0);setBadges([]);return;}
     // Game sessions are the source of truth in this project; reward tables are not installed.
@@ -658,10 +666,18 @@ function FunZonePage() {
     setBadges([...earned]);
   }
   useEffect(()=>{void loadRewards();},[user?.id]);
+  async function loadLeaderboard(){
+    if(!supabase||!user){setLeaderboard([]);return;}
+    const {data,error}=await supabase.from("game_weekly_leaderboard").select("username,display_name,best_score,attempts").eq("week_start",weeklyStart).eq("game_key",leaderboardGame).order("best_score",{ascending:false}).limit(10);
+    if(error){setGameMessage("Weekly tournament scores could not be loaded. ("+error.message+")");return;}
+    setLeaderboard(data??[]);
+  }
+  useEffect(()=>{void loadLeaderboard();},[user?.id,leaderboardGame,weeklyStart]);
   const badgeNames:Record<string,string>={first_play:"First Play",quiz_star:"Quiz Star",bingo_master:"Bingo Master",daily_spark:"Daily Spark",matchmaker:"Matchmaker"};
   const gameTitle = games.find(g=>g.title===activeGame)?.title ?? "";
   function startGame(title:string) {
     setActiveGame(title);setStep(0);setAnswers([]);setBingo([]);setMemoryOpen([]);setMemoryMatched([]);setMemoryDeck(["W","L","N","H","T","OT5","W","L","N","H","T","OT5"].sort(()=>Math.random()-.5));setGameMessage("");setGameResult(null);setWordGuess("");
+    if(title==="LYKN Quiz Arena"){setQuizOrder([...quiz].sort(()=>Math.random()-.5));setTimeLeft(60);}
   }
   const allowedGameKeys = new Set(["this_or_that","lykn_match","quiz_arena","emoji_decoder","word_games","daily_challenge","fandom_bingo","memory_match"]);
   async function finishGame(key:string, score:number, result:any, message:string) {
@@ -670,7 +686,7 @@ function FunZonePage() {
       if(!allowedGameKeys.has(key)) { setGameMessage("Your result is shown, but this game is not configured for progress saving yet."); return; }
       const {error}=await supabase.from("game_sessions").insert({user_id:user.id,game_key:key,score,result});
       if(error) setGameMessage("Progress could not be saved. Your result is still here. ("+error.message+")");
-      else await loadRewards();
+      else { await loadRewards(); await loadLeaderboard(); }
     } else setGameMessage("Sign in to save your progress.");
   }
   function answer(choice:string) {
@@ -680,9 +696,10 @@ function FunZonePage() {
       const score=next.reduce((sum,v)=>sum+(v==="A"?1:2),0);
       const matched=["WILLIAM","LEGO","NUT","HONG","TUI"][score%5];
       void finishGame("lykn_match",next.length,{answers:next,match:matched},"Your just-for-fun LYKN match is "+matched+"! This is a playful result, not a personality profile.");
-    } else if(activeGame==="LYKN Quiz Arena" && next.length>=quiz.length) {
-      const score=next.reduce((sum,v,i)=>sum+(v===quiz[i].answer?1:0),0);
-      void finishGame("quiz_arena",score,{answers:next,score,total:quiz.length},"Quiz complete: "+score+" / "+quiz.length+" correct.");
+    } else if(activeGame==="LYKN Quiz Arena") {
+      const score=next.reduce((sum,v,i)=>sum+(v===activeQuiz[i].answer?1:0),0);
+      if(next.length>=activeQuiz.length){void finishGame("quiz_arena",score,{answers:next,score,total:activeQuiz.length,difficulty:quizDifficulty,timed:timedMode},"Quiz complete: "+score+" / "+activeQuiz.length+" correct.");}
+      else setStep(next.length);
     } else if(activeGame==="Emoji Decoder" && next.length>=emojiQuiz.length) {
       const score=next.reduce((sum,v,i)=>sum+(v===emojiQuiz[i].answer?1:0),0);
       void finishGame("emoji_decoder",score,{answers:next,score,total:emojiQuiz.length},"Emoji Decoder complete: "+score+" / "+emojiQuiz.length+" correct.");
@@ -698,7 +715,13 @@ function FunZonePage() {
     if(bingo.length<5)return;
     await finishGame("fandom_bingo",bingo.length,{completed:bingo},"Fandom Bingo completed. You checked off "+bingo.length+" squares.");
   }
-  const question = activeGame==="This or That"?thisOrThat[step]:activeGame==="Who's Your LYKN Match?"?matchPrompts[step]:activeGame==="LYKN Quiz Arena"?quiz[step]:activeGame==="Emoji Decoder"?emojiQuiz[step]:activeGame==="Word Games"?wordQuestions[step]:null;
+  const question = activeGame==="This or That"?thisOrThat[step]:activeGame==="Who's Your LYKN Match?"?matchPrompts[step]:activeGame==="LYKN Quiz Arena"?activeQuiz[step]:activeGame==="Emoji Decoder"?emojiQuiz[step]:activeGame==="Word Games"?wordQuestions[step]:null;
+  useEffect(()=>{
+    if(activeGame!=="LYKN Quiz Arena"||!timedMode)return;
+    if(timeLeft<=0){const score=answers.reduce((sum,v,i)=>sum+(v===activeQuiz[i]?.answer?1:0),0);void finishGame("quiz_arena",score,{answers,score,total:activeQuiz.length,difficulty:quizDifficulty,timed:true},"Timed challenge complete: "+score+" correct.");return;}
+    const timer=window.setTimeout(()=>setTimeLeft((value)=>Math.max(0,value-1)),1000);
+    return ()=>window.clearTimeout(timer);
+  },[activeGame,timedMode,timeLeft,answers,quizDifficulty]);
   return <>
     <SectionHeading eyebrow="PLAY A LITTLE. STAY A WHILE." title="The Fun Zone" note="Tiny challenges, big fandom energy. Pick something and jump in."/>
     <div className="fun-hero"><div><div className="eyebrow">YOUR DAILY DOSE OF ✦</div><h2>Ready, set,<br/><em>LYKYOU!</em></h2><p>Play for fun, collect Stardust and celebrate what makes this fandom yours.</p><div className="fun-stats"><span><Trophy size={16}/> Badges to collect</span><span><Sparkles size={16}/> Daily challenges</span></div></div><div className="fun-orb"><Gamepad2 size={66}/><span>LET'S PLAY</span></div></div>
@@ -708,8 +731,10 @@ function FunZonePage() {
     {activeGame==="Daily Challenge" && <section className="this-or-that-game"><div className="eyebrow">DAILY CHALLENGE · {new Date().toLocaleDateString("en-IN",{day:"numeric",month:"short"})}</div><h3>Your mission today</h3><p>{dailyTask}</p><button className="button-primary" onClick={()=>void completeDaily()}>Mark challenge complete <Check size={14}/></button><button className="text-link" onClick={()=>setActiveGame(null)}>Not now</button></section>}
     {activeGame==="Fandom Bingo" && <section className="this-or-that-game"><div className="eyebrow">FANDOM BINGO · CHECK FIVE OR MORE</div><h3>Your LYKYOU bingo card</h3><div className="bingo-grid">{bingoTiles.map(tile=><button className={bingo.includes(tile)?"checked":""} key={tile} onClick={()=>setBingo(v=>v.includes(tile)?v.filter(x=>x!==tile):[...v,tile])}>{bingo.includes(tile)?"✓ ":""}{tile}</button>)}</div><p>{bingo.length} / 9 squares checked</p><button className="button-primary" disabled={bingo.length<5} onClick={()=>void completeBingo()}>Complete bingo</button><button className="text-link" onClick={()=>setActiveGame(null)}>Close card</button></section>}
     {!activeGame && gameMessage && <button className="button-primary" onClick={()=>setGameMessage("")}>Back to games</button>}
+    <section className="challenge-settings"><div><div className="eyebrow">MAKE IT YOUR CHALLENGE</div><strong>Quiz difficulty</strong><div className="filter-tabs">{["Casual","Standard","Expert"].map(level=><button key={level} className={quizDifficulty===level?"active":""} onClick={()=>setQuizDifficulty(level)}>{level}</button>)}</div><small>Casual: 5 questions · Standard: 12 questions · Expert: 6-question set</small></div><label className="timed-mode-toggle"><input type="checkbox" checked={timedMode} onChange={(event)=>setTimedMode(event.target.checked)}/> Timed Quiz Arena · 60 seconds</label></section>
     <div className="filter-tabs game-filters">{["All games","Quick play","Quizzes","Daily"].map((f) => <button className={selected === f ? "active" : ""} key={f} onClick={() => setSelected(f)}>{f}</button>)}</div>
     <div className="game-grid">{games.filter((g) => selected === "All games" || (selected === "Quick play" ? g.tag === "Quick play" || g.tag === "Just for fun" : selected === "Quizzes" ? g.tag === "Knowledge" || g.tag === "Puzzle" : g.tag === "Daily")).map((game) => <article className={`game-card game-card-${game.tone}`} key={game.title}><div className="game-art"><img src={game.art} alt={game.title+" artwork"} loading="lazy"/><div className="game-art-shade"/><div className={`game-icon tone-${game.tone}`}><game.icon size={25}/></div><span className="game-art-spark">✦</span></div><span className="game-tag">{game.tag}</span><h3>{game.title}</h3><p>{game.detail}</p><button className="button-outline" onClick={() => startGame(game.title)}>Play now <ArrowRight size={14}/></button></article>)}</div>
+    <section className="weekly-tournament-panel"><div className="eyebrow">WEEKLY TOURNAMENT · ASYNCHRONOUS</div><h3>LYKYOU Weekly Scoreboard</h3><p>Play whenever you like. Your best score for each game this week is compared with other members who have public profiles.</p><div className="filter-tabs">{[["quiz_arena","Quiz Arena"],["word_games","Word Games"],["emoji_decoder","Emoji Decoder"],["this_or_that","This or That"]].map(([key,label])=><button key={key} className={leaderboardGame===key?"active":""} onClick={()=>setLeaderboardGame(key)}>{label}</button>)}</div>{!user?<p>Sign in to take part in weekly tournaments.</p>:leaderboard.length===0?<p>No scores yet this week. Complete a game to enter the board!</p>:<div className="weekly-score-list">{leaderboard.map((entry,index)=><div key={entry.username} className="weekly-score-row"><b>#{index+1}</b><span><strong>{entry.display_name||entry.username}</strong><small>@{entry.username} · {entry.attempts} attempts</small></span><strong>{entry.best_score} pts</strong></div>)}</div>}<small>Scores reset each Monday (IST). The board shows public member profiles only.</small></section>
     <section className="stardust-panel"><div className="stardust-symbol">✧</div><div><div className="eyebrow">YOUR LITTLE WINS ADD UP</div><h3>Stardust & achievements</h3><p>Complete challenges and quizzes to record your progress. Badges can be awarded as the community grows.</p></div><div className="stardust-count"><strong>✦ {stardust}</strong><span>Stardust</span></div><div className="stardust-badges">{badges.length?badges.map(key=><span key={key}>✦ {badgeNames[key]||key}</span>):<small>{user?"Play games to earn your first badge.":"Sign in to save your progress."}</small>}</div></section>
     <SectionHeading eyebrow="BIAS CORNER" title="Your bias. Your universe." note="Celebrate your favourites, your OT5 heart and every bias-wrecker moment."/>
     <div className="bias-grid">{["My Bias","My Bias Wrecker","OT5 Corner","Bias Match"].map((x,i)=><button className="bias-card" key={x} onClick={()=>navigate("/bias-corner")}><span>{["♡","✧","✦","∞"][i]}</span><strong>{x}</strong><small>{["Set your favourites","Update your bias wrecker","All five, always","Find your bias twin"][i]}</small><ArrowRight size={15}/></button>)}</div>
