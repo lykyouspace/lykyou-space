@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { ArrowRight, Check, Save, UserRound, Camera, ImagePlus, MessageCircle, Send } from "lucide-react";
+import { ArrowRight, Check, Save, UserRound, Camera, ImagePlus, MessageCircle, Send, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, useStaffRole } from "../lib/auth";
 import { supabase } from "../lib/supabase";
@@ -54,6 +54,7 @@ export default function ProfilePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [profileComments, setProfileComments] = useState<any[]>([]);
+  const [gameHistory, setGameHistory] = useState<any[]>([]);
   const [commentText, setCommentText] = useState("");
   const [commentBusy, setCommentBusy] = useState(false);
   const [commentError, setCommentError] = useState("");
@@ -142,6 +143,16 @@ export default function ProfilePage() {
   }
 
   useEffect(() => { if (user?.id) void loadProfileComments(); }, [user?.id]);
+  useEffect(() => {
+    let active = true;
+    async function loadHistory(){
+      if(!user||!supabase){setGameHistory([]);return;}
+      const {data}=await supabase.from("game_sessions").select("id,game_key,score,created_at,result").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
+      if(active)setGameHistory(data??[]);
+    }
+    void loadHistory();
+    return()=>{active=false;};
+  },[user?.id]);
 
   async function publishProfileComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -278,6 +289,17 @@ export default function ProfilePage() {
           <div><small>FAVOURITE SONG</small><strong>{form.favourite_song || "Not added yet"}</strong></div>
           <div><small>FAVOURITE ERA</small><strong>{form.favourite_era || "Not added yet"}</strong></div>
         </div>
+        <section className="profile-achievement-history" aria-labelledby="my-profile-achievement-title">
+          <div className="profile-achievement-heading"><div><span className="eyebrow">YOUR FANDOM JOURNEY</span><h3 id="my-profile-achievement-title">Achievement history</h3><p>Games, challenges and little wins you've recorded in Space.</p></div><Trophy size={24}/></div>
+          <div className="profile-achievement-badges">
+            {gameHistory.length>0&&<span>✦ First Play</span>}
+            {gameHistory.some((item:any)=>item.game_key==="quiz_arena")&&<span>✦ Quiz Star</span>}
+            {gameHistory.some((item:any)=>item.game_key==="fandom_bingo")&&<span>✦ Bingo Master</span>}
+            {gameHistory.some((item:any)=>item.game_key==="daily_challenge")&&<span>✦ Daily Spark</span>}
+            {gameHistory.some((item:any)=>item.game_key==="lykn_match")&&<span>✦ Matchmaker</span>}
+          </div>
+          {gameHistory.length===0?<div className="profile-comment-empty">Your completed games and challenges will appear here.</div>:<div className="profile-achievement-list">{gameHistory.map((item:any)=><article key={item.id}><span>✦</span><div><strong>{({quiz_arena:"LYKN Quiz Arena",word_games:"Word Games",emoji_decoder:"Emoji Decoder",this_or_that:"This or That",lykn_match:"LYKN Match",daily_challenge:"Daily Challenge",fandom_bingo:"Fandom Bingo",memory_match:"Memory Match"} as Record<string,string>)[item.game_key]||item.game_key}</strong><small>{item.result?.challenge||item.result?.message||"Completed a Space activity"} · {new Date(item.created_at).toLocaleDateString()}</small></div><b>{item.score} pts</b></article>)}</div>}
+        </section>
         <section className="profile-guestbook" aria-labelledby="my-profile-guestbook-title">
           <div className="profile-guestbook-heading"><div><span className="eyebrow">MESSAGES FROM YOUR PEOPLE</span><h3 id="my-profile-guestbook-title">Profile comments <span>{profileComments.length}</span></h3><p>A little space for LYKYOUs to leave you a message.</p></div><MessageCircle size={24}/></div>
           <form className="profile-comment-compose" onSubmit={publishProfileComment}>
