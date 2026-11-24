@@ -35,6 +35,8 @@ export default function MusicHubPage() {
   const [contentItems, setContentItems] = useState<any[]>([]);
   const [contentQuery, setContentQuery] = useState("");
   const [contentType, setContentType] = useState("all");
+  const [contentMember, setContentMember] = useState("all");
+  const [contentYear, setContentYear] = useState("all");
   const [myVote, setMyVote] = useState<string | null>(null);
   const [chartWeek, setChartWeek] = useState("");
   const [loading, setLoading] = useState(true);
@@ -191,8 +193,12 @@ export default function MusicHubPage() {
   const filteredContent = useMemo(() => contentItems.filter((item) => {
     const matchesText = (item.title + " " + (item.description ?? "") + " " + (item.member_name ?? "")).toLowerCase().includes(contentQuery.toLowerCase());
     const types:Record<string,string[]> = {music:["release","solo_release","ost","collaboration"],videos:["music_video"],performance:["performance"],projects:["variety","other_project","acting_project","brand_project"]};
-    return matchesText && (contentType==="all" || (types[contentType] ?? []).includes(item.content_type));
-  }), [contentItems, contentQuery, contentType]);
+    const matchesMember = contentMember==="all" || item.member_name===contentMember;
+    const matchesYear = contentYear==="all" || (item.event_date??"").slice(0,4)===contentYear;
+    return matchesText && matchesMember && matchesYear && (contentType==="all" || (types[contentType] ?? []).includes(item.content_type));
+  }), [contentItems, contentQuery, contentType, contentMember, contentYear]);
+c  const contentMembers = [...new Set(contentItems.map((item)=>item.member_name).filter(Boolean))].sort();
+  const contentYears = [...new Set(contentItems.map((item)=>(item.event_date??"").slice(0,4)).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
   const calendarItems = useMemo(() => contentItems.filter((item) => item.event_date).slice(0,12), [contentItems]);
 
   return <section className="music-hub-page">
@@ -256,7 +262,7 @@ export default function MusicHubPage() {
     <section className="music-panel music-content-search">
       <div className="music-panel-heading"><div><span className="music-hub-eyebrow">SEARCHABLE LYKN ARCHIVE</span><h3><Music2 size={19}/> LYKN Content Finder</h3></div></div>
       <input className="music-search" value={contentQuery} onChange={(event)=>setContentQuery(event.target.value)} placeholder="Search songs, music videos, performances and projects…"/>
-      <div className="music-content-filters">{[["all","All"],["music","Music"],["videos","Music videos"],["performance","Performances"],["projects","Other projects"]].map(([key,label])=><button key={key} className={contentType===key?"active":""} onClick={()=>setContentType(key)}>{label}</button>)}</div>
+      <div className="music-content-filters">{[["all","All"],["music","Music"],["videos","Music videos"],["performance","Performances"],["projects","Other projects"]].map(([key,label])=><button key={key} className={contentType===key?"active":""} onClick={()=>setContentType(key)}>{label}</button>)}<select value={contentMember} onChange={(event)=>setContentMember(event.target.value)} aria-label="Filter by member"><option value="all">All members</option>{contentMembers.map((member)=><option value={member} key={member}>{member}</option>)}</select><select value={contentYear} onChange={(event)=>setContentYear(event.target.value)} aria-label="Filter by year"><option value="all">All years</option>{contentYears.map((year)=><option value={year} key={year}>{year}</option>)}</select></div>
       {filteredContent.length===0?<div className="music-empty-state">No matching archive entries. Try another search or category.</div>:<div className="music-content-list">{filteredContent.slice(0,30).map((item:any)=><article key={item.id}><div><strong>{item.title}</strong><span>{item.member_name||"LYKN"} · {item.content_type.replace("_"," ")}{item.event_date?" · "+item.event_date:""}</span>{item.description&&<p>{item.description}</p>}</div>{item.source_url&&<a href={item.source_url} target="_blank" rel="noreferrer" aria-label={"Open "+item.title}><ExternalLink size={14}/></a>}</article>)}</div>}
     </section>
 
