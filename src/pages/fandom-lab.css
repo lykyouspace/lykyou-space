@@ -110,3 +110,7 @@
 .fandom-lab-setlist li span select{width:max-content;max-width:100%;padding:5px 7px;border:1px solid rgba(180,168,230,.18);border-radius:7px;background:#111426;color:#d8ccff;font-size:9px}
 .fandom-setlist-duration{display:flex;align-items:center;gap:6px;color:#aaa6c2;font-size:9px}
 .fandom-setlist-duration input{width:64px;padding:5px 6px;border:1px solid rgba(180,168,230,.18);border-radius:7px;background:#111426;color:#f1edff;font-size:9px}
+
+.fandom-crossword-cell{position:relative;display:block;width:34px;height:34px}
+.fandom-crossword-cell small{position:absolute;z-index:1;top:1px;left:3px;color:#c4b5fd;font-size:7px;line-height:1}
+.fandom-crossword-cell input{position:absolute;inset:0}
