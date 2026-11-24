@@ -46,3 +46,8 @@
 .music-platform-panel p{margin:0;color:#b6b3ca;font-size:11px;line-height:1.7}
 @media(max-width:920px){.music-hub-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.music-hub-hero{grid-template-columns:1fr;padding:21px 18px;min-height:0}.music-hub-hero-art{display:none}.music-panel{padding:15px}.music-panel-heading h3,.music-panel h3{font-size:16px}.music-pool-track{gap:9px;padding:9px}.music-vote-button{padding:8px 9px}.music-track-art{width:40px;height:40px}}
+
+.music-link-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.music-link-grid a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;border:1px solid rgba(180,168,230,.15);border-radius:10px;background:#ffffff05;color:#d5caff;font-size:10px;font-weight:750}
+.music-official-links{display:grid;gap:10px;padding-top:13px;border-top:1px solid rgba(180,168,230,.12)}
+.music-platform-panel>small{color:#9693ae;font-size:9px;line-height:1.6}
