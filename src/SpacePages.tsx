@@ -664,7 +664,7 @@ function FunZonePage() {
   const activeQuiz = (quizOrder.length ? quizOrder : quiz).filter((_:any,index:number) => quizDifficulty==="Casual" ? index<5 : quizDifficulty==="Expert" ? index>=6 : true);
   const weeklyStart = (()=>{const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date()).split("-").map(Number);const date=new Date(Date.UTC(parts[0],parts[1]-1,parts[2]));date.setUTCDate(date.getUTCDate()-((date.getUTCDay()+6)%7));return date.toISOString().slice(0,10);})();
   async function loadRewards(){
-    if(!user||!supabase){setStardust(0);setBadges([]);return;}
+    if(!user||!supabase){setStardust(0);setBadges([]);setPersonalBests({});return;}
     // Game sessions are the source of truth in this project; reward tables are not installed.
     const {data:sessions,error}=await supabase.from("game_sessions").select("game_key,score").eq("user_id",user.id);
     if(error){setGameMessage("Your result is saved, but Stardust could not be refreshed. ("+error.message+")");return;}
