@@ -10,12 +10,12 @@ const MEMBERS = ["WILLIAM", "LEGO", "NUT", "HONG", "TUI"];
 
 type PrivateForm = {
   city: string; state: string; country: string; timezone: string; fan_journey: string;
-  interests: string; instagram: string; x: string; tiktok: string; youtube: string;
+  interests: string; instagram: string; x: string; tiktok: string; youtube: string; global_board_opt_in: boolean;
 };
 
 const emptyPrivate: PrivateForm = {
   city: "", state: "", country: "", timezone: "", fan_journey: "",
-  interests: "", instagram: "", x: "", tiktok: "", youtube: "",
+  interests: "", instagram: "", x: "", tiktok: "", youtube: "", global_board_opt_in: false,
 };
 
 type ProfileForm = {
@@ -72,7 +72,7 @@ export default function ProfilePage() {
           .select("username,display_name,bio,bias,bias_wrecker,favourite_song,favourite_era,profile_visibility,avatar_url,cover_url")
           .eq("id", user.id).maybeSingle(),
         supabase.from("profile_private")
-          .select("city,state,country,timezone,fan_journey,interests,social_links")
+          .select("city,state,country,timezone,fan_journey,interests,social_links,global_board_opt_in")
           .eq("user_id", user.id).maybeSingle(),
       ]);
       if (!active) return;
@@ -85,6 +85,7 @@ export default function ProfilePage() {
           timezone: privateData.timezone ?? "", fan_journey: privateData.fan_journey ?? "",
           interests: (privateData.interests ?? []).join(", "),
           instagram: links.instagram ?? "", x: links.x ?? "", tiktok: links.tiktok ?? "", youtube: links.youtube ?? "",
+          global_board_opt_in: privateData.global_board_opt_in ?? false,
         });
       }
       if (data) {
@@ -239,6 +240,7 @@ export default function ProfilePage() {
           city: privateForm.city.trim() || null,
           state: privateForm.state.trim() || null,
           country: privateForm.country.trim() || null,
+          global_board_opt_in: privateForm.global_board_opt_in,
           timezone: privateForm.timezone.trim() || null,
           fan_journey: privateForm.fan_journey.trim(),
           interests: privateForm.interests.split(",").map((item) => item.trim()).filter(Boolean).slice(0, 30),
@@ -360,6 +362,7 @@ export default function ProfilePage() {
             <label>Country<input value={privateForm.country} onChange={(e)=>setPrivateForm({...privateForm,country:e.target.value})} maxLength={80}/></label>
             <label>Timezone<input value={privateForm.timezone} onChange={(e)=>setPrivateForm({...privateForm,timezone:e.target.value})} maxLength={80} placeholder="e.g. Asia/Kolkata"/></label>
           </div>
+          <label className="profile-global-board-optin"><input type="checkbox" checked={privateForm.global_board_opt_in} onChange={(e)=>setPrivateForm({...privateForm,global_board_opt_in:e.target.checked})}/> <span><strong>Include my country in the Global LYKYOU Board</strong><small>Optional. Only an aggregated country count is shown publicly (and only after at least 3 members opt in). Your name, city and profile are not shown on the country board.</small></span></label>
           <label>My fandom journey<textarea value={privateForm.fan_journey} onChange={(e)=>setPrivateForm({...privateForm,fan_journey:e.target.value})} maxLength={2000} rows={3}/></label>
           <label>Interests (comma separated)<input value={privateForm.interests} onChange={(e)=>setPrivateForm({...privateForm,interests:e.target.value})} placeholder="music, dance, edits, photography"/></label>
           <div className="profile-two-col">
