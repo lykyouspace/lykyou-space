@@ -18,3 +18,12 @@
 .profile-global-board-optin span{display:grid;gap:5px}
 .profile-global-board-optin strong{color:#eee9ff;font-size:11px}
 .profile-global-board-optin small{color:#aaa6c2;font-size:9px;line-height:1.6}
+
+.profile-achievement-subgroup{display:grid;gap:7px;padding-top:10px;border-top:1px solid rgba(180,168,230,.12)}
+.profile-achievement-subgroup h4{display:flex;align-items:center;gap:7px;margin:0 0 2px;color:#d8ccff;font-size:10px}
+.profile-achievement-subgroup h4 svg{color:#bba9ff}
+.profile-achievement-subgroup article{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid rgba(180,168,230,.1);border-radius:9px;background:#ffffff03}
+.profile-achievement-subgroup article>span{color:#c4b5fd}
+.profile-achievement-subgroup article>div{display:grid;gap:3px}
+.profile-achievement-subgroup article strong{color:#f0edff;font-size:10px}
+.profile-achievement-subgroup article small{color:#a7a4bd;font-size:9px}
