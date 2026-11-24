@@ -197,7 +197,7 @@ export default function MusicHubPage() {
     const matchesYear = contentYear==="all" || (item.event_date??"").slice(0,4)===contentYear;
     return matchesText && matchesMember && matchesYear && (contentType==="all" || (types[contentType] ?? []).includes(item.content_type));
   }), [contentItems, contentQuery, contentType, contentMember, contentYear]);
-  const contentMembers = [...new Set(contentItems.map((item)=>item.member_name).filter(Boolean))].sort();
+  const contentMembers = [...new Set(contentItems.map((item)=>item.member_name).filter((member): member is string => Boolean(member)))].sort();
   const contentYears = [...new Set(contentItems.map((item)=>(item.event_date??"").slice(0,4)).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
   const calendarItems = useMemo(() => contentItems.filter((item) => item.event_date).slice(0,12), [contentItems]);
 
