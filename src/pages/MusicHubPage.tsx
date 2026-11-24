@@ -69,7 +69,7 @@ export default function MusicHubPage() {
 
   useEffect(() => {
     const client = supabase;
-    if (!user || !client || !playerHostRef.current) return;
+    if (!playerHostRef.current) return;
     let alive = true;
     let embed: any = null;
     const setup = (api: any) => {
@@ -81,7 +81,7 @@ export default function MusicHubPage() {
         created.addListener("playback_update", async (event: any) => {
           const data = event?.data;
           const uri = String(data?.playingURI ?? "");
-          if (!uri.startsWith("spotify:track:") || data?.isPaused || data?.isBuffering || Number(data?.position ?? 0) < 30000 || countedRef.current.has(uri)) return;
+          if (!uri.startsWith("spotify:track:") || data?.isPaused || data?.isBuffering || Number(data?.position ?? 0) < 30000 || countedRef.current.has(uri) || !user || !client) return;
           countedRef.current.add(uri);
           const id = spotifyTrackId(uri);
           const trackUrl = "https://open.spotify.com/track/" + id;
