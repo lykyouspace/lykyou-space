@@ -21,3 +21,9 @@
 .space-pages .seasonal-challenge-panel h3{margin:0;color:#f8f3ff;font:800 18px Manrope,sans-serif}
 .space-pages .seasonal-challenge-panel p{max-width:780px;margin:0;color:#c3bfd7;font-size:11px;line-height:1.65}
 .space-pages .seasonal-challenge-panel small{color:#9e9ab6;font-size:9px}
+
+.space-pages .personal-bests-panel{display:grid;grid-template-columns:1fr;gap:7px;padding:12px;border:1px solid rgba(180,168,230,.13);border-radius:11px;background:#ffffff04}
+.space-pages .personal-bests-panel h4{margin:0;color:#eee9ff;font-size:11px}
+.space-pages .personal-bests-panel>span{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#bcb8d1;font-size:10px}
+.space-pages .personal-bests-panel>span b{color:#cfc1ff}
+.space-pages .personal-bests-panel small{color:#9e9ab6;font-size:9px}
