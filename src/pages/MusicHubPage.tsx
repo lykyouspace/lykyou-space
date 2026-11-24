@@ -55,6 +55,7 @@ export default function MusicHubPage() {
   const weekStart = mondayOf(today);
   const selectedChartWeek = chartWeek || weekStart;
   const chartWeeks = Array.from({length:8},(_,index)=>{const date=new Date(weekStart+"T00:00:00Z");date.setUTCDate(date.getUTCDate()-index*7);return date.toISOString().slice(0,10);});
+  const isPastChart = selectedChartWeek < weekStart;
 
   const refresh = useCallback(async () => {
     if (!supabase || !user) { setPool([]); setRankings([]); setRecentTracks([]); setContentItems([]); setLoading(false); return; }
@@ -228,7 +229,7 @@ export default function MusicHubPage() {
           <li><b>Eligible plays:</b> a play counts after 30 seconds of continuous playback in the embedded player. Each signed-in member contributes at most one eligible play per song per day, so repeated loops do not inflate the selection count.</li>
           <li><b>Daily vote:</b> each signed-in member gets one vote per day from the five selected songs.</li>
           <li><b>Final submission:</b> votes cannot be changed or withdrawn.</li>
-          <li><b>Weekly winner:</b> the song with the most votes at the end of the week wins. A fresh round starts every Monday (IST).</li>
+          <li><b>Weekly winner:</b> the song with the most votes wins. When Monday begins, the previous chart is archived and a fresh round starts (IST).</li>
         </ol>
         <p className="music-disclaimer"><Info size={14}/> Play counts measure listening activity recorded inside LYKYOU Space, not official Spotify or YouTube streaming figures.</p>
       </section>
@@ -250,7 +251,7 @@ export default function MusicHubPage() {
 
     <section className="music-panel music-chart-panel">
       <div className="music-panel-heading"><div><span className="music-hub-eyebrow">LIVE VOTE TOTALS & CHART ARCHIVE</span><h3><Trophy size={19}/> Weekly chart</h3></div><select className="music-chart-period" value={selectedChartWeek} onChange={(event)=>setChartWeek(event.target.value)} aria-label="Select weekly chart">{chartWeeks.map((week)=> <option value={week} key={week}>Week of {week}</option>)}</select></div>
-      {!user ? <div className="music-empty-state">Sign in to view the weekly community chart.</div> : rankings.length === 0 ? <div className="music-empty-state">No votes were recorded for the week of {selectedChartWeek}.</div> : <div className="music-chart-list">{rankings.map((track) => <article key={track.track_uri} className="music-chart-row"><span className="music-chart-rank">#{track.rank_no}</span><div className="music-track-info"><strong>{track.title}</strong><span>{track.artist}</span></div><b>{track.vote_count} {track.vote_count === 1 ? "vote" : "votes"}</b></article>)}</div>}
+      {!user ? <div className="music-empty-state">Sign in to view the weekly community chart.</div> : rankings.length === 0 ? <div className="music-empty-state">No votes were recorded for the week of {selectedChartWeek}.</div> : <div className="music-chart-list">{rankings.map((track) => <article key={track.track_uri} className="music-chart-row"><span className="music-chart-rank">#{track.rank_no}</span><div className="music-track-info"><strong>{track.title}</strong><span>{track.artist}</span></div>{isPastChart && track.rank_no===1 && <span className="music-winner-pill">WEEKLY WINNER</span>}<b>{track.vote_count} {track.vote_count === 1 ? "vote" : "votes"}</b></article>)}</div>}
     </section>
 
     <section className="music-panel music-library-panel">
