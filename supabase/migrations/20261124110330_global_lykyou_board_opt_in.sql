@@ -9,7 +9,9 @@ create table if not exists public.global_board_country_counts (
 alter table public.global_board_country_counts enable row level security;
 create policy "Members can read aggregated global board counts" on public.global_board_country_counts
 for select to authenticated using (member_count >= 3);
-grant select on public.global_board_country_counts to authenticated;
+create policy "Public can read aggregated global board counts" on public.global_board_country_counts
+for select to anon using (member_count >= 3);
+grant select on public.global_board_country_counts to authenticated, anon;
 
 create or replace function private.sync_global_board_country_counts()
 returns trigger language plpgsql security definer set search_path = public, pg_temp
