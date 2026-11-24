@@ -202,9 +202,25 @@ export default function MusicHubPage() {
     </section>
 
     <section className="music-panel music-platform-panel">
-      <span className="music-hub-eyebrow">MORE WAYS TO LISTEN</span><h3>Spotify now · YouTube Music next</h3>
-      <p>Your Spotify playlist is connected as the initial Space player. We'll add the YouTube Music player and matching song links when you create that playlist. The library is designed to support both sources without duplicating song entries.</p>
-      <a href="https://music.youtube.com/search?q=LYKN" target="_blank" rel="noreferrer">Find LYKN on YouTube Music <ExternalLink size={14}/></a>
+      <span className="music-hub-eyebrow">STREAMING RESOURCE CENTRE</span><h3>Choose where you listen</h3>
+      <p>Your Spotify playlist is connected as the initial Space player. YouTube Music will be added as a second embedded option when its playlist is ready. Apple Music and other platform links remain available as external destinations.</p>
+      <div className="music-link-grid">
+        <a href={SPOTIFY_PLAYLIST} target="_blank" rel="noreferrer">Spotify playlist <ExternalLink size={14}/></a>
+        <a href="https://music.youtube.com/search?q=LYKN" target="_blank" rel="noreferrer">YouTube Music search <ExternalLink size={14}/></a>
+        <a href="https://music.apple.com/search?term=LYKN" target="_blank" rel="noreferrer">Apple Music search <ExternalLink size={14}/></a>
+      </div>
+      <div className="music-official-links">
+        <span className="music-hub-eyebrow">LYKN OFFICIAL CHANNELS</span>
+        <div className="music-link-grid">
+          <a href="https://www.youtube.com/@LYKN.Official" target="_blank" rel="noreferrer">YouTube <ExternalLink size={13}/></a>
+          <a href="https://www.instagram.com/lykn_official" target="_blank" rel="noreferrer">Instagram <ExternalLink size={13}/></a>
+          <a href="https://x.com/LYKNofficial" target="_blank" rel="noreferrer">X <ExternalLink size={13}/></a>
+          <a href="https://www.tiktok.com/@lyknofficial" target="_blank" rel="noreferrer">TikTok <ExternalLink size={13}/></a>
+          <a href="https://www.facebook.com/p/LYKN-100091274537769/?locale=th_TH" target="_blank" rel="noreferrer">Facebook <ExternalLink size={13}/></a>
+          <a href="https://www.gmm-tv.com/contents/8Oved/" target="_blank" rel="noreferrer">GMMTV official content <ExternalLink size={13}/></a>
+        </div>
+      </div>
+      <small>LYKYOU Space is an independent fan community. These are external official destinations; the Space is not affiliated with LYKN or GMMTV.</small>
     </section>
   </section>;
 }
