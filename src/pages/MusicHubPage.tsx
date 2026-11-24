@@ -78,6 +78,9 @@ export default function MusicHubPage() {
   useEffect(() => {
     const client = supabase;
     if (!playerHostRef.current) return;
+    countedRef.current.clear();
+    activeTrackRef.current = "";
+    activePlayingRef.current = false;
     let alive = true;
     let embed: any = null;
     const clearPendingTimer = () => {
