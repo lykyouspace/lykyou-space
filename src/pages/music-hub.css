@@ -68,3 +68,5 @@
 .music-chart-period{max-width:190px;padding:8px 10px;border:1px solid rgba(180,168,230,.2);border-radius:9px;background:#111426;color:#d8ccff;font-size:10px}
 
 .music-content-filters select{padding:7px 9px;border:1px solid rgba(180,168,230,.18);border-radius:999px;background:#111426;color:#d3caff;font-size:9px}
+
+.music-winner-pill{flex:none;padding:5px 7px;border:1px solid rgba(255,193,139,.4);border-radius:999px;background:rgba(255,179,107,.1);color:#ffc18b;font-size:8px;font-weight:900;letter-spacing:.08em}
