@@ -10,6 +10,7 @@ import {
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./space-pages.css";
 import "./pages/fun-zone-expansion.css";
+import "./pages/profile-achievements.css";
 import { useAuth, useStaffRole } from "./lib/auth";
 import AdminHQPage from "./pages/AdminHQPage";
 import { BookmarksPage, NotificationsPage, SettingsPage } from "./pages/MemberToolsPage";
