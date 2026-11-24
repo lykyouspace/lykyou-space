@@ -609,6 +609,7 @@ function FunZonePage() {
   const [quizOrder,setQuizOrder] = useState<any[]>([]);
   const [leaderboard,setLeaderboard] = useState<any[]>([]);
   const [leaderboardGame,setLeaderboardGame] = useState("quiz_arena");
+  const [seasonalDone,setSeasonalDone] = useState(false);
   const thisOrThat = [
     { prompt: "Your ideal fandom evening?", a: "Rewatch live stages", b: "Build a LYKN playlist" },
     { prompt: "Pick your kind of fan project", a: "A creative edit", b: "A community event" },
@@ -649,6 +650,15 @@ function FunZonePage() {
   const dailyTasks = ["Share a favourite LYKN performance and say why it matters to you.","Find a LYKYOU with a different bias and start a friendly conversation.","Make a five-song playlist for a friend who is new to LYKN.","Celebrate all five members with one positive message.","Share a fandom memory that still makes you smile."];
   const dayNumber = Math.floor(Date.now()/86400000);
   const dailyTask = dailyTasks[dayNumber % dailyTasks.length];
+  const quarter = Math.floor(new Date().getMonth()/3);
+  const seasonKey = new Date().getFullYear()+"-Q"+(quarter+1);
+  const seasonalChallenges = [
+    {title:"Fresh Start Quest",detail:"Explore the LYKN Universe, discover one project you had not seen before and share it with another LYKYOU."},
+    {title:"Summer Soundtrack Quest",detail:"Build a five-song LYKN playlist for a mood or memory and share the playlist link with the community."},
+    {title:"Fandom Together Quest",detail:"Find a fan project, offer one useful contribution and celebrate the people working on it."},
+    {title:"Memory & Milestones Quest",detail:"Revisit a favourite LYKN milestone, share why it matters and leave a kind message for another fan."}
+  ];
+  const seasonalChallenge = seasonalChallenges[quarter];
   const activeQuiz = (quizOrder.length ? quizOrder : quiz).filter((_:any,index:number) => quizDifficulty==="Casual" ? index<5 : quizDifficulty==="Expert" ? index>=6 : true);
   const weeklyStart = (()=>{const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date()).split("-").map(Number);const date=new Date(Date.UTC(parts[0],parts[1]-1,parts[2]));date.setUTCDate(date.getUTCDate()-((date.getUTCDay()+6)%7));return date.toISOString().slice(0,10);})();
   async function loadRewards(){
@@ -674,6 +684,7 @@ function FunZonePage() {
     setLeaderboard(data??[]);
   }
   useEffect(()=>{void loadLeaderboard();},[user?.id,leaderboardGame,weeklyStart]);
+  useEffect(()=>{let active=true;async function check(){if(!user||!supabase){setSeasonalDone(false);return;}const {data}=await supabase.from("game_sessions").select("id").eq("user_id",user.id).eq("game_key","daily_challenge").contains("result",{seasonal:true,seasonKey}).limit(1);if(active)setSeasonalDone(!!data?.length);}void check();return()=>{active=false;};},[user?.id,seasonKey]);
   const badgeNames:Record<string,string>={first_play:"First Play",quiz_star:"Quiz Star",bingo_master:"Bingo Master",daily_spark:"Daily Spark",matchmaker:"Matchmaker"};
   const gameTitle = games.find(g=>g.title===activeGame)?.title ?? "";
   function startGame(title:string) {
@@ -712,6 +723,11 @@ function FunZonePage() {
   async function completeDaily() {
     await finishGame("daily_challenge",1,{challenge:dailyTask,day:dayNumber},"Daily challenge completed. Thanks for adding something positive to the fandom.");
   }
+  async function completeSeasonal(){
+    if(!user||!supabase||seasonalDone)return;
+    await finishGame("daily_challenge",1,{challenge:seasonalChallenge.title,detail:seasonalChallenge.detail,seasonal:true,seasonKey},"Seasonal quest completed. Your contribution has been added to your Fun Zone history.");
+    setSeasonalDone(true);
+  }
   async function completeBingo() {
     if(bingo.length<5)return;
     await finishGame("fandom_bingo",bingo.length,{completed:bingo},"Fandom Bingo completed. You checked off "+bingo.length+" squares.");
@@ -735,6 +751,7 @@ function FunZonePage() {
     <section className="challenge-settings"><div><div className="eyebrow">MAKE IT YOUR CHALLENGE</div><strong>Quiz difficulty</strong><div className="filter-tabs">{["Casual","Standard","Expert"].map(level=><button key={level} className={quizDifficulty===level?"active":""} onClick={()=>setQuizDifficulty(level)} disabled={!!activeGame}>{level}</button>)}</div><small>Casual: 5 questions · Standard: 12 questions · Expert: 6-question set</small></div><label className="timed-mode-toggle"><input type="checkbox" checked={timedMode} disabled={!!activeGame} onChange={(event)=>setTimedMode(event.target.checked)}/> Timed Quiz Arena · 60 seconds</label></section>
     <div className="filter-tabs game-filters">{["All games","Quick play","Quizzes","Daily"].map((f) => <button className={selected === f ? "active" : ""} key={f} onClick={() => setSelected(f)}>{f}</button>)}</div>
     <div className="game-grid">{games.filter((g) => selected === "All games" || (selected === "Quick play" ? g.tag === "Quick play" || g.tag === "Just for fun" : selected === "Quizzes" ? g.tag === "Knowledge" || g.tag === "Puzzle" : g.tag === "Daily")).map((game) => <article className={`game-card game-card-${game.tone}`} key={game.title}><div className="game-art"><img src={game.art} alt={game.title+" artwork"} loading="lazy"/><div className="game-art-shade"/><div className={`game-icon tone-${game.tone}`}><game.icon size={25}/></div><span className="game-art-spark">✦</span></div><span className="game-tag">{game.tag}</span><h3>{game.title}</h3><p>{game.detail}</p><button className="button-outline" onClick={() => startGame(game.title)}>Play now <ArrowRight size={14}/></button></article>)}</div>
+    <section className="seasonal-challenge-panel"><div className="eyebrow">SEASONAL CHALLENGE · {seasonKey}</div><h3>{seasonalChallenge.title}</h3><p>{seasonalChallenge.detail}</p><button className="button-primary" disabled={seasonalDone||!user} onClick={()=>void completeSeasonal()}>{seasonalDone?"Quest completed this season":"Complete seasonal quest"} <Check size={14}/></button><small>{user?"One seasonal completion per member, per quarter.":"Sign in to save your seasonal quest."}</small></section>
     <section className="weekly-tournament-panel"><div className="eyebrow">WEEKLY TOURNAMENT · ASYNCHRONOUS</div><h3>LYKYOU Weekly Scoreboard</h3><p>Play whenever you like. Your best score for each game this week is compared with other members who have public profiles.</p><div className="filter-tabs">{[["quiz_arena","Quiz Arena"],["word_games","Word Games"],["emoji_decoder","Emoji Decoder"],["this_or_that","This or That"]].map(([key,label])=><button key={key} className={leaderboardGame===key?"active":""} onClick={()=>setLeaderboardGame(key)}>{label}</button>)}</div>{!user?<p>Sign in to take part in weekly tournaments.</p>:leaderboard.length===0?<p>No scores yet this week. Complete a game to enter the board!</p>:<div className="weekly-score-list">{leaderboard.map((entry,index)=><div key={entry.username} className="weekly-score-row"><b>#{index+1}</b><span><strong>{entry.display_name||entry.username}</strong><small>@{entry.username} · {entry.attempts} attempts</small></span><strong>{entry.best_score} pts</strong></div>)}</div>}<small>Scores reset each Monday (IST). The board shows public member profiles only.</small></section>
     <section className="stardust-panel"><div className="stardust-symbol">✧</div><div><div className="eyebrow">YOUR LITTLE WINS ADD UP</div><h3>Stardust & achievements</h3><p>Complete challenges and quizzes to record your progress. Badges can be awarded as the community grows.</p></div><div className="stardust-count"><strong>✦ {stardust}</strong><span>Stardust</span></div><div className="stardust-badges">{badges.length?badges.map(key=><span key={key}>✦ {badgeNames[key]||key}</span>):<small>{user?"Play games to earn your first badge.":"Sign in to save your progress."}</small>}</div></section>
     <SectionHeading eyebrow="BIAS CORNER" title="Your bias. Your universe." note="Celebrate your favourites, your OT5 heart and every bias-wrecker moment."/>
