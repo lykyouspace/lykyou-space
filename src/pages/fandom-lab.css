@@ -106,3 +106,7 @@
 .fandom-open-projects>article strong{color:#f1edff;font-size:11px}
 .fandom-open-projects>article p{margin-top:4px;font-size:9px}
 .fandom-open-projects>article>span{color:#c4b5fd;font-size:9px;white-space:nowrap}
+
+.fandom-lab-setlist li span select{width:max-content;max-width:100%;padding:5px 7px;border:1px solid rgba(180,168,230,.18);border-radius:7px;background:#111426;color:#d8ccff;font-size:9px}
+.fandom-setlist-duration{display:flex;align-items:center;gap:6px;color:#aaa6c2;font-size:9px}
+.fandom-setlist-duration input{width:64px;padding:5px 6px;border:1px solid rgba(180,168,230,.18);border-radius:7px;background:#111426;color:#f1edff;font-size:9px}
