@@ -98,3 +98,11 @@
 .fandom-global-country-list span{color:#c4b5fd;font-size:10px;font-weight:800}
 .fandom-global-links{display:flex;flex-wrap:wrap;gap:14px}
 @media(max-width:760px){.fandom-global-country-list{grid-template-columns:1fr}}
+
+.fandom-open-projects{display:grid;gap:8px;padding-top:13px;border-top:1px solid rgba(180,168,230,.12)}
+.fandom-open-projects h4{margin:0;color:#e9e4ff;font-size:12px}
+.fandom-open-projects>article{display:flex;align-items:center;gap:12px;padding:11px;border:1px solid rgba(180,168,230,.13);border-radius:10px;background:#ffffff04}
+.fandom-open-projects>article>div{flex:1;min-width:0}
+.fandom-open-projects>article strong{color:#f1edff;font-size:11px}
+.fandom-open-projects>article p{margin-top:4px;font-size:9px}
+.fandom-open-projects>article>span{color:#c4b5fd;font-size:9px;white-space:nowrap}
