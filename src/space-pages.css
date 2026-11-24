@@ -3788,3 +3788,84 @@ body { min-width: 320px; overflow-x: hidden; }
  .space-pages .universe-banner.meet-lykn-banner>*:not(.universe-banner-group-photo){max-width:76%!important}
  .space-pages .universe-banner.meet-lykn-banner::before{background:linear-gradient(90deg,rgba(8,11,27,.92),rgba(8,11,27,.7) 55%,rgba(8,11,27,.18))!important}
 }
+
+
+/* Mobile banner layering: keep the artwork behind a readable text layer. */
+@media (max-width: 700px) {
+  .space-pages .community-hero-banner,
+  .space-pages .bias-corner-hero {
+    position:relative!important;
+    isolation:isolate!important;
+    overflow:hidden!important;
+    min-height:220px!important;
+    padding:22px 18px!important;
+  }
+  .space-pages .community-hero-image,
+  .space-pages .bias-corner-banner-image {
+    position:absolute!important;
+    inset:0!important;
+    z-index:0!important;
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:none!important;
+    object-fit:cover!important;
+    opacity:1!important;
+  }
+  .space-pages .community-hero-banner::before,
+  .space-pages .bias-corner-hero::before {
+    content:""!important;
+    position:absolute!important;
+    inset:0!important;
+    z-index:1!important;
+    background:linear-gradient(90deg,rgba(7,10,27,.96) 0%,rgba(9,13,34,.86) 48%,rgba(9,13,34,.48) 100%)!important;
+    pointer-events:none!important;
+  }
+  .space-pages .community-hero-copy,
+  .space-pages .community-hero-stars,
+  .space-pages .bias-corner-hero-copy,
+  .space-pages .bias-corner-hero-art {
+    position:relative!important;
+    z-index:2!important;
+  }
+  .space-pages .community-hero-copy,
+  .space-pages .bias-corner-hero-copy {
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    opacity:1!important;
+    visibility:visible!important;
+  }
+  .space-pages .community-hero-copy .eyebrow,
+  .space-pages .bias-corner-hero-copy .eyebrow { color:#d5c5ff!important; }
+  .space-pages .community-hero-copy h2,
+  .space-pages .bias-corner-hero-copy h2 {
+    color:#fff!important;
+    text-shadow:0 2px 12px rgba(0,0,0,.65)!important;
+  }
+  .space-pages .community-hero-copy p,
+  .space-pages .bias-corner-hero-copy p {
+    color:#f0edff!important;
+    text-shadow:0 1px 8px rgba(0,0,0,.9)!important;
+    max-width:100%!important;
+  }
+  .space-pages .bias-corner-hero-copy .button-primary { position:relative!important;z-index:3!important; }
+  .space-pages .bias-corner-hero-art { display:none!important; }
+  .space-pages .community-hero-stars { display:none!important; }
+  .space-pages .universe-banner.meet-lykn-banner {
+    height:300px!important;min-height:300px!important;max-height:300px!important;
+    padding:20px 16px!important;
+  }
+  .space-pages .universe-banner.meet-lykn-banner .universe-banner-group-photo {
+    object-fit:contain!important;
+    object-position:center bottom!important;
+    width:100%!important;height:100%!important;
+    background:linear-gradient(145deg,#10152e,#17122d)!important;
+  }
+  .space-pages .universe-banner.meet-lykn-banner::before {
+    background:linear-gradient(90deg,rgba(8,11,27,.94) 0%,rgba(8,11,27,.82) 43%,rgba(8,11,27,.26) 100%)!important;
+  }
+  .space-pages .universe-banner.meet-lykn-banner>*:not(.universe-banner-group-photo) {
+    max-width:78%!important;
+  }
+}
