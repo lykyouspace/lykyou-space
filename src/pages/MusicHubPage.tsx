@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-type MusicTrack = { track_uri: string; title: string; artist: string; artwork_url: string | null; play_count?: number; vote_count?: number; rank_no?: number };
+type MusicTrack = { track_uri: string; title: string; artist: string; artwork_url: string | null; spotify_url?: string; play_count?: number; vote_count?: number; rank_no?: number };
 const SPOTIFY_PLAYLIST = "https://open.spotify.com/playlist/14wIpQfJrUSpDjOAbk0Egj";
 const SPOTIFY_URI = "spotify:playlist:14wIpQfJrUSpDjOAbk0Egj";
 
@@ -51,7 +51,7 @@ export default function MusicHubPage() {
     const [poolResult, rankingResult, tracksResult, voteResult] = await Promise.all([
       supabase.rpc("get_weekly_music_pool"),
       supabase.rpc("get_weekly_music_results", { p_week_start: weekStart }),
-      supabase.from("music_tracks").select("track_uri,title,artist,artwork_url,created_at").order("created_at", { ascending: false }).limit(60),
+      supabase.from("music_tracks").select("track_uri,title,artist,artwork_url,spotify_url,created_at").order("created_at", { ascending: false }).limit(60),
       supabase.from("music_weekly_votes").select("track_uri").eq("user_id", user.id).eq("vote_date", today).maybeSingle(),
     ]);
     if (poolResult.error) setError(poolResult.error.message);
