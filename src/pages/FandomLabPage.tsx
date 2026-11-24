@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, BookOpen, CalendarClock, Check, Compass, Copy, ExternalLink, Globe2, Heart, Link2, ListMusic, Lock, Music2, RefreshCw, Shuffle, Sparkles, Ticket, Trophy, WandSparkles } from "lucide-react";
+import { ArrowDown, ArrowUp, BookOpen, CalendarClock, Compass, Copy, ExternalLink, Globe2, Heart, Link2, ListMusic, Lock, Music2, RefreshCw, Shuffle, Sparkles, Ticket, Trophy, WandSparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { useAuth } from "../lib/auth";
 import "./fandom-lab.css";
 
 type ArchiveEntry = { id: string; content_type: string; title: string; description: string; member_name: string | null; event_date: string | null; source_url: string | null };
@@ -34,7 +33,6 @@ async function copyText(value: string) {
 }
 
 export default function FandomLabPage() {
-  const { user } = useAuth();
   const [tab, setTab] = useState("roulette");
   const [archive, setArchive] = useState<ArchiveEntry[]>([]);
   const [tracks, setTracks] = useState<any[]>([]);
@@ -59,7 +57,6 @@ export default function FandomLabPage() {
   const [capsuleText, setCapsuleText] = useState("");
   const [capsuleDate, setCapsuleDate] = useState("");
   const [capsuleSaved, setCapsuleSaved] = useState<any>(null);
-  const [capsuleDraft, setCapsuleDraft] = useState<any>(null);
   const [memberCount, setMemberCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -116,7 +113,7 @@ export default function FandomLabPage() {
   function saveCapsule() {
     if (!capsuleText.trim() || !capsuleDate) { setNotice("Add a message and a reveal date first."); return; }
     const record={text:capsuleText.trim(),revealDate:capsuleDate,createdAt:new Date().toISOString()};
-    try { localStorage.setItem("lykyou-space-time-capsule-v1",JSON.stringify(record)); setCapsuleSaved(record); setCapsuleDraft(null); setNotice("Your time capsule is saved on this device."); }
+    try { localStorage.setItem("lykyou-space-time-capsule-v1",JSON.stringify(record)); setCapsuleSaved(record); setNotice("Your time capsule is saved on this device."); }
     catch { setNotice("This browser couldn't save the capsule. Copy your message somewhere safe."); }
   }
   const capsuleUnlocked = capsuleSaved ? new Date(capsuleSaved.revealDate+"T00:00:00").getTime() <= Date.now() : false;
