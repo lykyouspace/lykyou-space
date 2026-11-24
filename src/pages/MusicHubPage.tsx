@@ -36,6 +36,7 @@ export default function MusicHubPage() {
   const [contentQuery, setContentQuery] = useState("");
   const [contentType, setContentType] = useState("all");
   const [myVote, setMyVote] = useState<string | null>(null);
+  const [chartWeek, setChartWeek] = useState("");
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState(false);
   const [message, setMessage] = useState("");
@@ -50,13 +51,15 @@ export default function MusicHubPage() {
   const playerHostRef = useRef<HTMLDivElement>(null);
   const today = istToday();
   const weekStart = mondayOf(today);
+  const selectedChartWeek = chartWeek || weekStart;
+  const chartWeeks = Array.from({length:8},(_,index)=>{const date=new Date(weekStart+"T00:00:00Z");date.setUTCDate(date.getUTCDate()-index*7);return date.toISOString().slice(0,10);});
 
   const refresh = useCallback(async () => {
     if (!supabase || !user) { setPool([]); setRankings([]); setRecentTracks([]); setContentItems([]); setLoading(false); return; }
     setLoading(true);
     const [poolResult, rankingResult, tracksResult, voteResult, contentResult] = await Promise.all([
       supabase.rpc("get_weekly_music_pool"),
-      supabase.rpc("get_weekly_music_results", { p_week_start: weekStart }),
+      supabase.rpc("get_weekly_music_results", { p_week_start: selectedChartWeek }),
       supabase.from("music_tracks").select("track_uri,title,artist,artwork_url,spotify_url,created_at").order("created_at", { ascending: false }).limit(60),
       supabase.from("music_weekly_votes").select("track_uri").eq("user_id", user.id).eq("vote_date", today).maybeSingle(),
       supabase.from("lykn_universe_content").select("id,content_type,title,description,member_name,event_date,source_url").in("content_type",["release","solo_release","ost","collaboration","music_video","performance","variety","other_project","acting_project","brand_project"]).order("event_date",{ascending:false,nullsFirst:false}).limit(200),
@@ -71,7 +74,7 @@ export default function MusicHubPage() {
     if (voteResult.error && !voteResult.error.message.toLowerCase().includes("0 rows")) setError(voteResult.error.message);
     setMyVote(voteResult.data?.track_uri ?? null);
     setLoading(false);
-  }, [user?.id, today, weekStart]);
+  }, [user?.id, today, weekStart, selectedChartWeek]);
 
   useEffect(() => { void refresh(); }, [refresh]);
 
@@ -240,8 +243,8 @@ export default function MusicHubPage() {
     </section>
 
     <section className="music-panel music-chart-panel">
-      <div className="music-panel-heading"><div><span className="music-hub-eyebrow">LIVE VOTE TOTALS</span><h3><Trophy size={19}/> This week's chart</h3></div></div>
-      {!user ? <div className="music-empty-state">Sign in to view the weekly community chart.</div> : rankings.length === 0 ? <div className="music-empty-state">No votes have been recorded for this week yet. Be among the first to vote!</div> : <div className="music-chart-list">{rankings.map((track) => <article key={track.track_uri} className="music-chart-row"><span className="music-chart-rank">#{track.rank_no}</span><div className="music-track-info"><strong>{track.title}</strong><span>{track.artist}</span></div><b>{track.vote_count} {track.vote_count === 1 ? "vote" : "votes"}</b></article>)}</div>}
+      <div className="music-panel-heading"><div><span className="music-hub-eyebrow">LIVE VOTE TOTALS & CHART ARCHIVE</span><h3><Trophy size={19}/> Weekly chart</h3></div><select className="music-chart-period" value={selectedChartWeek} onChange={(event)=>setChartWeek(event.target.value)} aria-label="Select weekly chart">{chartWeeks.map((week)=> <option value={week} key={week}>Week of {week}</option>)}</select></div>
+      {!user ? <div className="music-empty-state">Sign in to view the weekly community chart.</div> : rankings.length === 0 ? <div className="music-empty-state">No votes were recorded for the week of {selectedChartWeek}.</div> : <div className="music-chart-list">{rankings.map((track) => <article key={track.track_uri} className="music-chart-row"><span className="music-chart-rank">#{track.rank_no}</span><div className="music-track-info"><strong>{track.title}</strong><span>{track.artist}</span></div><b>{track.vote_count} {track.vote_count === 1 ? "vote" : "votes"}</b></article>)}</div>}
     </section>
 
     <section className="music-panel music-library-panel">
