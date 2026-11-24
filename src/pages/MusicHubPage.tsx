@@ -68,7 +68,8 @@ export default function MusicHubPage() {
   useEffect(() => { void refresh(); }, [refresh]);
 
   useEffect(() => {
-    if (!user || !supabase || !playerHostRef.current) return;
+    const client = supabase;
+    if (!user || !client || !playerHostRef.current) return;
     let alive = true;
     let embed: any = null;
     const setup = (api: any) => {
@@ -96,7 +97,7 @@ export default function MusicHubPage() {
               artwork = typeof metadata.thumbnail_url === "string" ? metadata.thumbnail_url : null;
             }
           } catch { /* Listening can still be recorded with a safe fallback title. */ }
-          const { error: listenError } = await supabase.rpc("record_music_listen", {
+          const { error: listenError } = await client.rpc("record_music_listen", {
             p_track_uri: uri, p_title: title, p_artist: artist, p_artwork_url: artwork,
           });
           if (listenError) setError(listenError.message);
