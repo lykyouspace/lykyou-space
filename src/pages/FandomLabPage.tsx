@@ -60,22 +60,28 @@ export default function FandomLabPage() {
   const [capsuleSaved, setCapsuleSaved] = useState<any>(null);
   const [memberCount, setMemberCount] = useState<number | null>(null);
   const [globalBoard, setGlobalBoard] = useState<{country:string;member_count:number}[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [projectTasks, setProjectTasks] = useState<any[]>([]);
 
   useEffect(() => {
     let active = true;
     async function load() {
       if (!supabase) { setLoading(false); return; }
-      const [archiveResult, tracksResult, countResult, boardResult] = await Promise.all([
+      const [archiveResult, tracksResult, countResult, boardResult, projectsResult, tasksResult] = await Promise.all([
         supabase.from("lykn_universe_content").select("id,content_type,title,description,member_name,event_date,source_url").in("content_type", ["release","solo_release","ost","collaboration","timeline","achievement","performance","music_video"]).order("event_date", { ascending: true, nullsFirst: false }).limit(150),
         supabase.from("music_tracks").select("track_uri,title,artist,spotify_url").order("created_at", { ascending: false }).limit(100),
         supabase.from("profiles").select("id", { count: "exact", head: true }).eq("profile_visibility", "public"),
         supabase.from("global_board_country_counts").select("country,member_count").gte("member_count",3).order("member_count",{ascending:false}).limit(50),
+        supabase.from("projects").select("id,title,summary,status").eq("status","published").order("created_at",{ascending:false}).limit(20),
+        supabase.from("project_tasks").select("id,project_id,title,status").eq("status","open").limit(100),
       ]);
       if (!active) return;
       if (archiveResult.error) setError(archiveResult.error.message); else setArchive((archiveResult.data ?? []) as ArchiveEntry[]);
       if (!tracksResult.error) setTracks(tracksResult.data ?? []);
       if (!countResult.error) setMemberCount(countResult.count ?? 0);
       if (!boardResult.error) setGlobalBoard((boardResult.data ?? []) as {country:string;member_count:number}[]);
+      if (!projectsResult.error) setProjects(projectsResult.data ?? []);
+      if (!tasksResult.error) setProjectTasks(tasksResult.data ?? []);
 
       setLoading(false);
     }
@@ -157,7 +163,7 @@ export default function FandomLabPage() {
 
     {!loading && tab==="capsule" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">A NOTE FOR YOUR FUTURE SELF</span><h3><Lock/> LYKYOU Time Capsule</h3><p>Write a message to your future self and choose a reveal date. It is saved locally in this browser, not in your account or Supabase.</p>{capsuleSaved&&!capsuleUnlocked?<div className="fandom-capsule-locked"><Lock/><strong>Your capsule is sealed until {capsuleSaved.revealDate}.</strong><span>Open this Space on the same device after the reveal date.</span></div>:capsuleSaved&&capsuleUnlocked?<div className="fandom-capsule-open"><Sparkles/><strong>Your time capsule is ready</strong><p>{capsuleSaved.text}</p><button className="fandom-lab-secondary" onClick={()=>{localStorage.removeItem("lykyou-space-time-capsule-v1");setCapsuleSaved(null);setCapsuleText("");setCapsuleDate("");}}>Close and clear capsule</button></div>:<div className="fandom-lab-form"><label>Your message<textarea rows={5} maxLength={2000} value={capsuleText} onChange={(e)=>setCapsuleText(e.target.value)} placeholder="What do you want your future self to remember?"/></label><label>Reveal date<input type="date" min={new Date().toISOString().slice(0,10)} value={capsuleDate} onChange={(e)=>setCapsuleDate(e.target.value)}/></label><button className="fandom-lab-primary" onClick={saveCapsule}>Seal my time capsule</button></div>}</section>}
 
-    {!loading && tab==="missions" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">SMALL ACTIONS, BIG FANDOM ENERGY</span><h3><Sparkles/> Fan Project Missions</h3><p>Pick a practical way to support a fan initiative. Project tasks and volunteer coordination live in the Fandom Hub, so progress is managed in one place.</p><div className="fandom-mission-grid"><article><b>01 · Discover</b><strong>Find a project that interests you</strong><Link to="/fan-project-wall">Browse the Fan Project Wall <ExternalLink size={13}/></Link></article><article><b>02 · Contribute</b><strong>Choose a task that fits your skills</strong><Link to="/fandom-hub">Explore Fandom Hub <ExternalLink size={13}/></Link></article><article><b>03 · Celebrate</b><strong>Share progress and thank the team</strong><Link to="/community">Celebrate in Community <ExternalLink size={13}/></Link></article></div></section>}
+    {!loading && tab==="missions" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">SMALL ACTIONS, BIG FANDOM ENERGY</span><h3><Sparkles/> Fan Project Missions</h3><p>Pick a practical way to support a fan initiative. Project tasks and volunteer coordination live in the Fandom Hub, so progress is managed in one place.</p><div className="fandom-mission-grid"><article><b>01 · Discover</b><strong>Find a project that interests you</strong><Link to="/fan-project-wall">Browse the Fan Project Wall <ExternalLink size={13}/></Link></article><article><b>02 · Contribute</b><strong>Choose a task that fits your skills</strong><Link to="/fandom-hub">Explore Fandom Hub <ExternalLink size={13}/></Link></article><article><b>03 · Celebrate</b><strong>Share progress and thank the team</strong><Link to="/community">Celebrate in Community <ExternalLink size={13}/></Link></article></div><div className="fandom-open-projects"><h4>Open community projects</h4>{projects.length===0?<p className="fandom-lab-muted">No published projects are listed right now. Check the Fan Project Wall for new initiatives.</p>:projects.map((project)=><article key={project.id}><div><strong>{project.title}</strong><p>{project.summary}</p></div><span>{projectTasks.filter((task)=>task.project_id===project.id).length} open tasks</span><Link to="/fan-project-wall">View project <ExternalLink size={12}/></Link></article>)}</div></section>}
 
     {!loading && tab==="global" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">A WORLDWIDE FANDOM</span><h3><Globe2/> Global LYKYOU Board</h3><div className="fandom-global-stat"><strong>{memberCount===null?"—":memberCount}</strong><span>public member profiles</span></div><p>Country totals include only members who explicitly opt in. A country appears after at least three members choose to share it; names, cities and individual profiles are not exposed by this board.</p>{globalBoard.length===0?<div className="fandom-lab-muted">No country has reached the three-member display threshold yet. You can opt in from your profile's private details.</div>:<div className="fandom-global-country-list">{globalBoard.map((item)=><article key={item.country}><strong>{item.country}</strong><span>{item.member_count} LYKYOUs</span></article>)}</div>}<div className="fandom-global-links"><Link to="/profile">Manage my country-sharing preference <ExternalLink size={13}/></Link><Link to="/members">Meet the LYKYOUs <ExternalLink size={13}/></Link></div></section>}
   </section>;
