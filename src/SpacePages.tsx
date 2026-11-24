@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import {
-  ArrowRight, Bell, CalendarDays, Check, ChevronDown, ChevronRight,
+  ArrowRight, Bell, CalendarDays, Check, ChevronDown, ChevronRight, Headphones,
   CircleHelp, Flame, Gamepad2, Heart, Home, Menu, MessageCircle,
   MoreHorizontal, Plus, Search, Settings, Shield, Sparkles, Star, Trophy,
   Users, X, Zap, Bookmark, Music2, Megaphone, FolderHeart, Globe2, Send,
@@ -15,6 +15,7 @@ import { BookmarksPage, NotificationsPage, SettingsPage } from "./pages/MemberTo
 import MembersPage from "./pages/MembersPage";
 import GroupsPage from "./pages/GroupsPage";
 import ProfilePage from "./pages/ProfilePage";
+import MusicHubPage from "./pages/MusicHubPage";
 import { supabase } from "./lib/supabase";
 
 type NavItem = { label: string; path: string; icon: LucideIcon; description?: string };
@@ -29,6 +30,7 @@ const mainNav: NavItem[] = [
   { label: "Fandom Hub", path: "/fandom-hub", icon: Heart, description: "Projects, campaigns and fandom activities" },
   { label: "LYKN", path: "/lykn-universe", icon: Globe2, description: "Meet the group and members" },
   { label: "LYKN Archive", path: "/lykn-archive", icon: Music2, description: "Songs, videos, discography and milestones" },
+  { label: "Music Library", path: "/music-library", icon: Headphones, description: "Listen, discover and vote in weekly charts" },
   { label: "LYKN Updates", path: "/updates", icon: Megaphone, description: "Fanclub updates and schedules" },
 ];
 const members = [
@@ -338,6 +340,7 @@ function SpacePages() {
         {location.pathname === "/bias-corner" && <BiasCornerPage/>}
         {location.pathname === "/lykn-universe" && <UniversePage setNotice={setNotice}/> }
         {location.pathname === "/lykn-archive" && <UniversePage setNotice={setNotice} archive/> }
+        {location.pathname === "/music-library" && <MusicHubPage/>}
         {location.pathname === "/updates" && <UpdatesPage setNotice={setNotice}/> }
         {location.pathname === "/profile" && <ProfilePage/>}
         {location.pathname === "/admin" && <AdminHQPage/>}
