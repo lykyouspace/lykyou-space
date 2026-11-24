@@ -9,14 +9,15 @@ type Song = { key: string; title: string; artist: string; url: string | null; so
 const members = ["WILLIAM", "LEGO", "NUT", "HONG", "TUI"];
 const passportTasks = ["Visit the member's LYKN Universe hub", "Listen to a song or project connected to them", "Watch a verified performance or video", "Share a positive appreciation message", "Discover something new about their work"];
 const bingoPrompts = ["Rewatched a favourite stage", "Saved a LYKN song", "Found a new LYKYOU", "Joined a fan project", "Played a Space game", "Shared a LYKN update", "Explored a member hub", "Made a playlist", "Voted in a weekly chart", "Joined an online event", "Learned a new fact", "Recommended LYKN to a friend", "Celebrated OT5", "Found a new performance", "Left a kind comment", "Joined a streaming party", "Visited the Music Library", "Tried a new game", "Shared a fandom memory", "Checked LYKN updates", "Supported a fan project", "Discovered an OST", "Met a fan with another bias", "Used a Space countdown"];
+const crosswordRows = ["####WILLIAM","###LYKYOU##","###E##K####","HONG##NUT##","###O####U##","########I##"];
 const crosswordClues = [
-  { clue: "The five-member group at the centre of this community", answer: "LYKN" },
-  { clue: "The fandom name used in LYKYOU Space", answer: "LYKYOU" },
-  { clue: "Member whose name starts with W", answer: "WILLIAM" },
-  { clue: "Member whose name starts with L", answer: "LEGO" },
-  { clue: "Member whose name starts with N", answer: "NUT" },
-  { clue: "Member whose name starts with H", answer: "HONG" },
-  { clue: "Member whose name starts with T", answer: "TUI" },
+  { number:"1 Across", clue:"Member whose name starts with W", answer:"WILLIAM" },
+  { number:"2 Across", clue:"The fandom name used in LYKYOU Space", answer:"LYKYOU" },
+  { number:"3 Across", clue:"Member whose name starts with H", answer:"HONG" },
+  { number:"4 Across", clue:"Member whose name starts with N", answer:"NUT" },
+  { number:"1 Down", clue:"The five-member group at the centre of this community", answer:"LYKN" },
+  { number:"2 Down", clue:"Member whose name starts with L", answer:"LEGO" },
+  { number:"4 Down", clue:"Member whose name starts with T", answer:"TUI" },
 ];
 const story = [
   { title: "A new corner of the galaxy", text: "You open LYKYOU Space and find a quiet little music room, a buzzing project wall and a trail of glowing stars. Where will you begin?", choices: [{ label: "Follow the music", next: 1 }, { label: "Find the project crew", next: 2 }] },
@@ -47,6 +48,7 @@ export default function FandomLabPage() {
   const [bingo, setBingo] = useState<string[]>([]);
   const [bingoChecked, setBingoChecked] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<number,string>>({});
+  const [crosswordAnswers, setCrosswordAnswers] = useState<Record<string,string>>({});
   const [watchTitle, setWatchTitle] = useState("LYKN watch party");
   const [watchDate, setWatchDate] = useState("");
   const [watchTime, setWatchTime] = useState("20:00");
@@ -95,7 +97,8 @@ export default function FandomLabPage() {
   }, [tracks, archive]);
   const timeline = useMemo(() => archive.filter((item) => item.content_type === "timeline" || item.content_type === "achievement").sort((a,b) => (a.event_date ?? "9999").localeCompare(b.event_date ?? "9999")), [archive]);
   const passportDone = passportTasks.filter((_,i) => passport[bias+":"+i]).length;
-  const checkedAnswers = crosswordClues.filter((clue,i) => (answers[i] ?? "").trim().toUpperCase() === clue.answer).length;
+  const crosswordCorrect = crosswordRows.reduce((sum,row,r) => sum + row.split("").filter((letter,col) => letter !== "#" && (crosswordAnswers[r+"-"+col] ?? "").toUpperCase() === letter).length,0);
+  const crosswordTotal = crosswordRows.reduce((sum,row) => sum + [...row].filter((letter) => letter !== "#").length,0);
 
   function pickRoulette() {
     if (!songs.length) { setNotice("The roulette will be ready once the Music Library has tracks to draw from."); return; }
@@ -141,7 +144,7 @@ export default function FandomLabPage() {
 
     {!loading && tab==="memory" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">THE MOMENTS THAT SHAPED THE JOURNEY</span><h3><Heart/> Memory Lane</h3><p>Milestones and achievements already recorded in the LYKN Universe timeline.</p>{timeline.length===0?<p className="fandom-lab-muted">Timeline entries will appear here as they are added to LYKN Universe.</p>:<div className="fandom-memory-list">{timeline.map((item)=><article key={item.id}><time>{item.event_date??"Date not listed"}</time><div><strong>{item.title}</strong><p>{item.description}</p></div></article>)}</div>}<Link to="/lykn-universe">Explore LYKN Universe <ExternalLink size={13}/></Link></section>}
 
-    {!loading && tab==="crossword" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">A QUICK FANDOM WORD CHALLENGE</span><h3><BookOpen/> LYKN Crossword Challenge</h3><p>Answer each clue using the group and member names. Answers are checked locally; no scores or answers are uploaded.</p><div className="fandom-crossword-clues">{crosswordClues.map((item,i)=><label key={item.clue}><span><b>{i+1}.</b> {item.clue} <small>{item.answer.length} letters</small></span><input value={answers[i]??""} onChange={(event)=>setAnswers((current)=>({...current,[i]:event.target.value.toUpperCase()}))} maxLength={10} placeholder="Your answer"/></label>)}</div><div className="fandom-lab-progress"><span>{checkedAnswers} / {crosswordClues.length} correct</span><div><i style={{width:(checkedAnswers/crosswordClues.length*100)+"%"}}/></div></div><button className="fandom-lab-secondary" onClick={()=>setAnswers({})}><RefreshCw size={14}/> Reset puzzle</button></section>}
+    {!loading && tab==="crossword" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">A QUICK FANDOM WORD CHALLENGE</span><h3><BookOpen/> LYKN Crossword Challenge</h3><p>Answer each clue using the group and member names. Answers are checked locally; no scores or answers are uploaded.</p><div className="fandom-crossword-layout"><div className="fandom-crossword-grid">{crosswordRows.map((row,r)=><div className="fandom-crossword-row" key={r}>{row.split("").map((letter,col)=>letter==="#"?<span className="fandom-crossword-block" key={col}/>:<input key={col} aria-label={"Row "+(r+1)+" column "+(col+1)} maxLength={1} value={crosswordAnswers[r+"-"+col]??""} onChange={(event)=>setCrosswordAnswers((current)=>({...current,[r+"-"+col]:event.target.value.slice(-1).toUpperCase()}))}/>)}</div>)}</div><div className="fandom-crossword-clues">{crosswordClues.map((item)=><div key={item.number}><b>{item.number}</b><span>{item.clue}</span><small>{item.answer.length} letters</small></div>)}</div></div><div className="fandom-lab-progress"><span>{crosswordCorrect} / {crosswordTotal} letters correct</span><div><i style={{width:(crosswordCorrect/crosswordTotal*100)+"%"}}/></div></div><div className="fandom-lab-actions"><button className="fandom-lab-primary" onClick={()=>setNotice(crosswordCorrect===crosswordTotal?"Crossword solved! ✦":"Not quite yet — check the crossing letters and try again.")}>Check crossword</button><button className="fandom-lab-secondary" onClick={()=>setCrosswordAnswers({})}><RefreshCw size={14}/> Reset puzzle</button></div></section>}
 
     {!loading && tab==="bingo" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">MAKE YOUR OWN FANDOM CARD</span><h3><Trophy/> LYKN Bingo Generator</h3><p>Generate a fresh 5 × 5 challenge card. Mark the moments you've experienced and make a new card whenever you like.</p><button className="fandom-lab-primary" onClick={shuffleBingo}>Generate / shuffle card</button>{bingo.length>0&&<div className="fandom-bingo-grid">{bingo.map((prompt,i)=><button key={i} className={bingoChecked.includes(prompt)?"checked":""} onClick={()=>setBingoChecked((current)=>current.includes(prompt)?current.filter((item)=>item!==prompt):[...current,prompt])}>{prompt==="FREE SPACE"?"✦ FREE SPACE":prompt}</button>)}</div>}</section>}
 
