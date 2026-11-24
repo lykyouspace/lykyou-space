@@ -59,6 +59,7 @@ export default function FandomLabPage() {
   const [capsuleDate, setCapsuleDate] = useState("");
   const [capsuleSaved, setCapsuleSaved] = useState<any>(null);
   const [memberCount, setMemberCount] = useState<number | null>(null);
+  const [globalBoard, setGlobalBoard] = useState<{country:string;member_count:number}[]>([]);
 
   useEffect(() => {
     let active = true;
@@ -68,11 +69,13 @@ export default function FandomLabPage() {
         supabase.from("lykn_universe_content").select("id,content_type,title,description,member_name,event_date,source_url").in("content_type", ["release","solo_release","ost","collaboration","timeline","achievement","performance","music_video"]).order("event_date", { ascending: true, nullsFirst: false }).limit(150),
         supabase.from("music_tracks").select("track_uri,title,artist,spotify_url").order("created_at", { ascending: false }).limit(100),
         supabase.from("profiles").select("id", { count: "exact", head: true }).eq("profile_visibility", "public"),
+        supabase.from("global_board_country_counts").select("country,member_count").gte("member_count",3).order("member_count",{ascending:false}).limit(50),
       ]);
       if (!active) return;
       if (archiveResult.error) setError(archiveResult.error.message); else setArchive((archiveResult.data ?? []) as ArchiveEntry[]);
       if (!tracksResult.error) setTracks(tracksResult.data ?? []);
       if (!countResult.error) setMemberCount(countResult.count ?? 0);
+
       setLoading(false);
     }
     void load();
@@ -155,6 +158,6 @@ export default function FandomLabPage() {
 
     {!loading && tab==="missions" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">SMALL ACTIONS, BIG FANDOM ENERGY</span><h3><Sparkles/> Fan Project Missions</h3><p>Pick a practical way to support a fan initiative. Project tasks and volunteer coordination live in the Fandom Hub, so progress is managed in one place.</p><div className="fandom-mission-grid"><article><b>01 · Discover</b><strong>Find a project that interests you</strong><Link to="/fan-project-wall">Browse the Fan Project Wall <ExternalLink size={13}/></Link></article><article><b>02 · Contribute</b><strong>Choose a task that fits your skills</strong><Link to="/fandom-hub">Explore Fandom Hub <ExternalLink size={13}/></Link></article><article><b>03 · Celebrate</b><strong>Share progress and thank the team</strong><Link to="/community">Celebrate in Community <ExternalLink size={13}/></Link></article></div></section>}
 
-    {!loading && tab==="global" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">A WORLDWIDE FANDOM</span><h3><Globe2/> Global LYKYOU Board</h3><div className="fandom-global-stat"><strong>{memberCount===null?"—":memberCount}</strong><span>public member profiles</span></div><p>Meet LYKYOUs from around the world through the member directory. A country-by-country map is not enabled yet because location fields are private by default; we'll only add a public country board with an explicit opt-in from each member.</p><Link to="/members">Meet the LYKYOUs <ExternalLink size={13}/></Link></section>}
+    {!loading && tab==="global" && <section className="fandom-lab-panel"><span className="fandom-lab-eyebrow">A WORLDWIDE FANDOM</span><h3><Globe2/> Global LYKYOU Board</h3><div className="fandom-global-stat"><strong>{memberCount===null?"—":memberCount}</strong><span>public member profiles</span></div><p>Country totals include only members who explicitly opt in. A country appears after at least three members choose to share it; names, cities and individual profiles are not exposed by this board.</p>{globalBoard.length===0?<div className="fandom-lab-muted">No country has reached the three-member display threshold yet. You can opt in from your profile's private details.</div>:<div className="fandom-global-country-list">{globalBoard.map((item)=><article key={item.country}><strong>{item.country}</strong><span>{item.member_count} LYKYOUs</span></article>)}</div>}<div className="fandom-global-links"><Link to="/profile">Manage my country-sharing preference <ExternalLink size={13}/></Link><Link to="/members">Meet the LYKYOUs <ExternalLink size={13}/></Link></div></section>}
   </section>;
 }
