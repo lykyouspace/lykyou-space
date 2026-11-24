@@ -225,7 +225,7 @@ export default function MusicHubPage() {
         <h3><Trophy size={20}/> LYKYOU Weekly Rankings</h3>
         <ol className="music-rules-list">
           <li><b>Automatic selection:</b> the five songs with the most eligible Space plays in the previous week enter the new voting round.</li>
-          <li><b>Eligible plays:</b> a play counts after 30 seconds of continuous playback in the embedded player. Each member can contribute one play per song per day.</li>
+          <li><b>Eligible plays:</b> a play counts after 30 seconds of continuous playback in the embedded player. Each signed-in member contributes at most one eligible play per song per day, so repeated loops do not inflate the selection count.</li>
           <li><b>Daily vote:</b> each signed-in member gets one vote per day from the five selected songs.</li>
           <li><b>Final submission:</b> votes cannot be changed or withdrawn.</li>
           <li><b>Weekly winner:</b> the song with the most votes at the end of the week wins. A fresh round starts every Monday (IST).</li>
