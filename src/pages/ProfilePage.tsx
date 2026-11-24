@@ -4,6 +4,7 @@ import { ArrowRight, Check, Save, UserRound, Camera, ImagePlus, MessageCircle, S
 import { useNavigate } from "react-router-dom";
 import { useAuth, useStaffRole } from "../lib/auth";
 import { supabase } from "../lib/supabase";
+import "./profile-achievements.css";
 
 const MEMBERS = ["WILLIAM", "LEGO", "NUT", "HONG", "TUI"];
 
