@@ -726,7 +726,8 @@ function FunZonePage() {
   async function completeSeasonal(){
     if(!user||!supabase||seasonalDone)return;
     await finishGame("daily_challenge",1,{challenge:seasonalChallenge.title,detail:seasonalChallenge.detail,seasonal:true,seasonKey},"Seasonal quest completed. Your contribution has been added to your Fun Zone history.");
-    setSeasonalDone(true);
+    const {data}=await supabase.from("game_sessions").select("id").eq("user_id",user.id).eq("game_key","daily_challenge").contains("result",{seasonal:true,seasonKey}).limit(1);
+    setSeasonalDone(!!data?.length);
   }
   async function completeBingo() {
     if(bingo.length<5)return;
