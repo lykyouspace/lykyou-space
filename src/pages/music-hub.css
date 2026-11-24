@@ -66,3 +66,5 @@
 .music-calendar-list time{flex:none;width:85px;color:#c4b5fd;font-size:10px;font-weight:800}
 
 .music-chart-period{max-width:190px;padding:8px 10px;border:1px solid rgba(180,168,230,.2);border-radius:9px;background:#111426;color:#d8ccff;font-size:10px}
+
+.music-content-filters select{padding:7px 9px;border:1px solid rgba(180,168,230,.18);border-radius:999px;background:#111426;color:#d3caff;font-size:9px}
