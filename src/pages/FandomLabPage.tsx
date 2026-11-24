@@ -47,7 +47,6 @@ export default function FandomLabPage() {
   const [passport, setPassport] = useState<Record<string, boolean>>({});
   const [bingo, setBingo] = useState<string[]>([]);
   const [bingoChecked, setBingoChecked] = useState<string[]>([]);
-  const [answers, setAnswers] = useState<Record<number,string>>({});
   const [crosswordAnswers, setCrosswordAnswers] = useState<Record<string,string>>({});
   const [watchTitle, setWatchTitle] = useState("LYKN watch party");
   const [watchDate, setWatchDate] = useState("");
