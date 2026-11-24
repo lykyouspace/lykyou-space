@@ -1001,6 +1001,7 @@ function PublicMemberProfilePage({username}:{username:string}) {
   const [friendStatus,setFriendStatus]=useState("");
   const {isStaff}=useStaffRole();
   const [profileComments,setProfileComments]=useState<any[]>([]);
+  const [gameAchievements,setGameAchievements]=useState<any[]>([]);
   const [commentText,setCommentText]=useState("");
   const [replyTo,setReplyTo]=useState<string|null>(null);
   const [replyText,setReplyText]=useState("");
@@ -1035,6 +1036,16 @@ function PublicMemberProfilePage({username}:{username:string}) {
   useEffect(()=>{
     if(profile?.id)void loadProfileComments(profile.id);
   },[profile?.id]);
+  useEffect(()=>{
+    let active=true;
+    async function loadAchievements(){
+      if(!supabase||!profile?.username||profile.profile_visibility!=="public"){setGameAchievements([]);return;}
+      const {data}=await supabase.from("game_weekly_leaderboard").select("week_start,game_key,best_score,attempts").eq("username",profile.username).order("week_start",{ascending:false}).limit(30);
+      if(active)setGameAchievements(data??[]);
+    }
+    void loadAchievements();
+    return()=>{active=false;};
+  },[profile?.username,profile?.profile_visibility]);
   async function publishProfileComment(parentId:string|null=null){
     if(!user){navigate("/login");return;}
     if(!supabase||!profile)return;
@@ -1079,6 +1090,7 @@ function PublicMemberProfilePage({username}:{username:string}) {
       {friendStatus&&<p className="auth-message success">{friendStatus}</p>}
       <p className="member-profile-bio">{profile.bio||"A LYKYOU in the galaxy."}</p>
       <div className="member-profile-facts"><div><small>MY BIAS</small><strong>{profile.bias?.length?profile.bias.join(" · "):"Not set yet"}</strong></div><div><small>BIAS WRECKER</small><strong>{profile.bias_wrecker?.length?profile.bias_wrecker.join(" · "):"Not set yet"}</strong></div><div><small>FAVOURITE SONG</small><strong>{profile.favourite_song||"Not added yet"}</strong></div><div><small>FAVOURITE ERA</small><strong>{profile.favourite_era||"Not added yet"}</strong></div></div>
+      {profile.profile_visibility==="public"&&<section className="profile-achievement-history" aria-labelledby="public-achievement-title"><div className="profile-achievement-heading"><div><span className="eyebrow">GAMES · CHALLENGES · WEEKLY TOURNAMENTS</span><h3 id="public-achievement-title">Achievement history</h3><p>Public weekly game results shared by this LYKYOU.</p></div><Trophy size={24}/></div>{gameAchievements.length===0?<div className="profile-comment-empty">No public tournament results yet. Their Space achievements will appear here as they play.</div>:<div className="profile-achievement-list">{gameAchievements.map((item:any,index:number)=><article key={item.week_start+"-"+item.game_key+"-"+index}><span>✦</span><div><strong>{({quiz_arena:"LYKN Quiz Arena",word_games:"Word Games",emoji_decoder:"Emoji Decoder",this_or_that:"This or That"} as Record<string,string>)[item.game_key]||item.game_key}</strong><small>Week of {item.week_start} · {item.attempts} attempts</small></div><b>{item.best_score} pts</b></article>)}</div>}</section>}
       <section className="profile-guestbook" aria-labelledby="profile-guestbook-title">
         <div className="profile-guestbook-heading"><div><span className="eyebrow">A LITTLE NOTE FOR THIS LYKYOU</span><h3 id="profile-guestbook-title">Guestbook <span>{profileComments.length}</span></h3><p>Leave a kind message, say hello or reply to another fan.</p></div><MessageCircle size={24}/></div>
         {user?<form className="profile-comment-compose" onSubmit={e=>{e.preventDefault();void publishProfileComment();}}><textarea value={commentText} onChange={e=>setCommentText(e.target.value)} placeholder="Write a message for this LYKYOU…" maxLength={1000} rows={3} required/><div><small>{commentText.length}/1000</small><button className="button-primary" type="submit" disabled={commentBusy||!commentText.trim()}><Send size={14}/>{commentBusy?"Posting…":"Leave a comment"}</button></div></form>:<div className="profile-comment-signin">Sign in to leave a comment. <button className="text-link" onClick={()=>navigate("/login")}>Sign in <ArrowRight size={13}/></button></div>}
