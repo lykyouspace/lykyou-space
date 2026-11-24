@@ -16,6 +16,7 @@ import MembersPage from "./pages/MembersPage";
 import GroupsPage from "./pages/GroupsPage";
 import ProfilePage from "./pages/ProfilePage";
 import MusicHubPage from "./pages/MusicHubPage";
+import FandomLabPage from "./pages/FandomLabPage";
 import { supabase } from "./lib/supabase";
 
 type NavItem = { label: string; path: string; icon: LucideIcon; description?: string };
@@ -31,6 +32,7 @@ const mainNav: NavItem[] = [
   { label: "LYKN", path: "/lykn-universe", icon: Globe2, description: "Meet the group and members" },
   { label: "LYKN Archive", path: "/lykn-archive", icon: Music2, description: "Songs, videos, discography and milestones" },
   { label: "Music Library", path: "/music-library", icon: Headphones, description: "Listen, discover and vote in weekly charts" },
+  { label: "Fandom Lab", path: "/fandom-lab", icon: Sparkles, description: "Interactive fandom tools and experiences" },
   { label: "LYKN Updates", path: "/updates", icon: Megaphone, description: "Fanclub updates and schedules" },
 ];
 const members = [
@@ -341,6 +343,7 @@ function SpacePages() {
         {location.pathname === "/lykn-universe" && <UniversePage setNotice={setNotice}/> }
         {location.pathname === "/lykn-archive" && <UniversePage setNotice={setNotice} archive/> }
         {location.pathname === "/music-library" && <MusicHubPage/>}
+        {location.pathname === "/fandom-lab" && <FandomLabPage/>}
         {location.pathname === "/updates" && <UpdatesPage setNotice={setNotice}/> }
         {location.pathname === "/profile" && <ProfilePage/>}
         {location.pathname === "/admin" && <AdminHQPage/>}
