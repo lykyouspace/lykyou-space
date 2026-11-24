@@ -3772,3 +3772,19 @@ body { min-width: 320px; overflow-x: hidden; }
 .space-pages .universe-banner.meet-lykn-banner p{font-size:12px;line-height:1.55;color:#e0e1f0;margin:0}
 .space-pages .universe-banner.meet-lykn-banner .universe-disclaimer{margin-top:10px}
 @media(max-width:700px){.space-pages .universe-banner.meet-lykn-banner{height:250px;min-height:250px;max-height:250px;padding:22px 19px}.space-pages .universe-banner.meet-lykn-banner::before{background:linear-gradient(90deg,rgba(10,13,28,.9),rgba(10,13,28,.65) 55%,rgba(10,13,28,.12)),linear-gradient(0deg,rgba(10,13,28,.2),transparent 60%)}.space-pages .universe-banner.meet-lykn-banner>*:not(.universe-banner-group-photo){max-width:76%}.space-pages .universe-banner.meet-lykn-banner .universe-banner-group-photo{object-position:center 40%}}
+
+
+/* Final Meet LYKN banner override: beat the older shared banner image rules. */
+.space-pages .universe-banner.meet-lykn-banner{height:280px!important;min-height:280px!important;max-height:280px!important;overflow:hidden!important;position:relative!important;isolation:isolate!important}
+.space-pages .universe-banner.meet-lykn-banner .universe-banner-group-photo{display:block!important;visibility:visible!important;position:absolute!important;inset:0!important;right:0!important;bottom:0!important;z-index:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center 42%!important;opacity:1!important;filter:none!important;pointer-events:none!important}
+.space-pages .universe-banner.meet-lykn-banner::before{content:""!important;position:absolute!important;inset:0!important;z-index:1!important;background:linear-gradient(90deg,rgba(8,11,27,.94) 0%,rgba(8,11,27,.82) 34%,rgba(8,11,27,.28) 66%,rgba(8,11,27,.04) 100%)!important;pointer-events:none!important}
+.space-pages .universe-banner.meet-lykn-banner>*:not(.universe-banner-group-photo){position:relative!important;z-index:2!important;width:auto!important;max-width:48%!important}
+.space-pages .universe-banner.meet-lykn-banner .universe-stars{margin-bottom:8px!important}
+.space-pages .universe-banner.meet-lykn-banner h2{font-size:clamp(30px,3.2vw,40px)!important;line-height:1.04!important;margin:5px 0 8px!important}
+.space-pages .universe-banner.meet-lykn-banner p{font-size:12px!important;line-height:1.55!important;margin:0!important}
+@media(max-width:700px){
+ .space-pages .universe-banner.meet-lykn-banner{height:250px!important;min-height:250px!important;max-height:250px!important;padding:22px 19px!important}
+ .space-pages .universe-banner.meet-lykn-banner .universe-banner-group-photo{width:100%!important;max-width:none!important;height:100%!important;object-position:center 40%!important}
+ .space-pages .universe-banner.meet-lykn-banner>*:not(.universe-banner-group-photo){max-width:76%!important}
+ .space-pages .universe-banner.meet-lykn-banner::before{background:linear-gradient(90deg,rgba(8,11,27,.92),rgba(8,11,27,.7) 55%,rgba(8,11,27,.18))!important}
+}
