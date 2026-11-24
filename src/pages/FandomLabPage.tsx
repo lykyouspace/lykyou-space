@@ -65,7 +65,7 @@ export default function FandomLabPage() {
     let active = true;
     async function load() {
       if (!supabase) { setLoading(false); return; }
-      const [archiveResult, tracksResult, countResult] = await Promise.all([
+      const [archiveResult, tracksResult, countResult, boardResult] = await Promise.all([
         supabase.from("lykn_universe_content").select("id,content_type,title,description,member_name,event_date,source_url").in("content_type", ["release","solo_release","ost","collaboration","timeline","achievement","performance","music_video"]).order("event_date", { ascending: true, nullsFirst: false }).limit(150),
         supabase.from("music_tracks").select("track_uri,title,artist,spotify_url").order("created_at", { ascending: false }).limit(100),
         supabase.from("profiles").select("id", { count: "exact", head: true }).eq("profile_visibility", "public"),
@@ -75,6 +75,7 @@ export default function FandomLabPage() {
       if (archiveResult.error) setError(archiveResult.error.message); else setArchive((archiveResult.data ?? []) as ArchiveEntry[]);
       if (!tracksResult.error) setTracks(tracksResult.data ?? []);
       if (!countResult.error) setMemberCount(countResult.count ?? 0);
+      if (!boardResult.error) setGlobalBoard((boardResult.data ?? []) as {country:string;member_count:number}[]);
 
       setLoading(false);
     }
