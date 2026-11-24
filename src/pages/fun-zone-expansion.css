@@ -16,3 +16,8 @@
 .space-pages .weekly-score-row strong{color:#f0edff;font-size:11px}
 .space-pages .weekly-score-row small{color:#a7a4bd;font-size:9px}
 .space-pages .weekly-score-row>strong:last-child{color:#d2c4ff}
+
+.space-pages .seasonal-challenge-panel{display:grid;gap:10px;margin:16px 0;padding:20px;border:1px solid rgba(245,168,209,.2);border-radius:18px;background:radial-gradient(ellipse at 100% 0,rgba(245,168,209,.13),transparent 42%),linear-gradient(145deg,#211b37,#15182b)}
+.space-pages .seasonal-challenge-panel h3{margin:0;color:#f8f3ff;font:800 18px Manrope,sans-serif}
+.space-pages .seasonal-challenge-panel p{max-width:780px;margin:0;color:#c3bfd7;font-size:11px;line-height:1.65}
+.space-pages .seasonal-challenge-panel small{color:#9e9ab6;font-size:9px}
