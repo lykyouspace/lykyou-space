@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { ArrowRight, Check, Save, UserRound, Camera, ImagePlus, MessageCircle, Send, Trophy } from "lucide-react";
+import { ArrowRight, Check, Save, UserRound, Camera, ImagePlus, MessageCircle, Send, Trophy, CalendarDays, ListChecks } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, useStaffRole } from "../lib/auth";
 import { supabase } from "../lib/supabase";
@@ -56,6 +56,8 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [profileComments, setProfileComments] = useState<any[]>([]);
   const [gameHistory, setGameHistory] = useState<any[]>([]);
+  const [eventHistory, setEventHistory] = useState<any[]>([]);
+  const [projectHistory, setProjectHistory] = useState<any[]>([]);
   const [commentText, setCommentText] = useState("");
   const [commentBusy, setCommentBusy] = useState(false);
   const [commentError, setCommentError] = useState("");
@@ -149,8 +151,16 @@ export default function ProfilePage() {
     let active = true;
     async function loadHistory(){
       if(!user||!supabase){setGameHistory([]);return;}
-      const {data}=await supabase.from("game_sessions").select("id,game_key,score,created_at,result").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
-      if(active)setGameHistory(data??[]);
+      const [gamesResult,rsvpsResult,tasksResult]=await Promise.all([
+        supabase.from("game_sessions").select("id,game_key,score,created_at,result").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30),
+        supabase.from("event_rsvps").select("event_id,response,created_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30),
+        supabase.from("project_tasks").select("id,project_id,title,status,created_at").eq("assigned_user_id",user.id).eq("status","done").order("created_at",{ascending:false}).limit(30),
+      ]);
+      if(!active)return;
+      setGameHistory(gamesResult.data??[]);
+      setProjectHistory(tasksResult.data??[]);
+      const rsvps=rsvpsResult.data??[];
+      if(rsvps.length){const {data:events}=await supabase.from("events").select("id,title,starts_at,event_type").in("id",rsvps.map((item:any)=>item.event_id));const eventMap=new Map((events??[]).map((item:any)=>[item.id,item]));setEventHistory(rsvps.map((item:any)=>({...item,event:eventMap.get(item.event_id)})).filter((item:any)=>!!item.event));}else setEventHistory([]);
     }
     void loadHistory();
     return()=>{active=false;};
@@ -301,7 +311,7 @@ export default function ProfilePage() {
             {gameHistory.some((item:any)=>item.game_key==="daily_challenge")&&<span>✦ Daily Spark</span>}
             {gameHistory.some((item:any)=>item.game_key==="lykn_match")&&<span>✦ Matchmaker</span>}
           </div>
-          {gameHistory.length===0?<div className="profile-comment-empty">Your completed games and challenges will appear here.</div>:<div className="profile-achievement-list">{gameHistory.map((item:any)=><article key={item.id}><span>✦</span><div><strong>{({quiz_arena:"LYKN Quiz Arena",word_games:"Word Games",emoji_decoder:"Emoji Decoder",this_or_that:"This or That",lykn_match:"LYKN Match",daily_challenge:"Daily Challenge",fandom_bingo:"Fandom Bingo",memory_match:"Memory Match"} as Record<string,string>)[item.game_key]||item.game_key}</strong><small>{item.result?.challenge||item.result?.message||"Completed a Space activity"} · {new Date(item.created_at).toLocaleDateString()}</small></div><b>{item.score} pts</b></article>)}</div>}
+{gameHistory.length===0&&eventHistory.length===0&&projectHistory.length===0?<div className="profile-comment-empty">Your games, event RSVPs and completed project tasks will appear here.</div>:<><div className="profile-achievement-list">{gameHistory.map((item:any)=><article key={"game-"+item.id}><span>✦</span><div><strong>{({quiz_arena:"LYKN Quiz Arena",word_games:"Word Games",emoji_decoder:"Emoji Decoder",this_or_that:"This or That",lykn_match:"LYKN Match",daily_challenge:"Daily Challenge",fandom_bingo:"Fandom Bingo",memory_match:"Memory Match"} as Record<string,string>)[item.game_key]||item.game_key}</strong><small>{item.result?.challenge||item.result?.message||"Completed a Space activity"} · {new Date(item.created_at).toLocaleDateString()}</small></div><b>{item.score} pts</b></article>)}</div>{eventHistory.length>0&&<div className="profile-achievement-subgroup"><h4><CalendarDays size={14}/> Event participation</h4>{eventHistory.map((item:any)=><article key={"event-"+item.event_id}><span>✦</span><div><strong>{item.event.title}</strong><small>{item.response==="going"?"Going":item.response==="interested"?"Interested":"RSVP"} · {new Date(item.event.starts_at).toLocaleDateString()}</small></div></article>)}</div>}{projectHistory.length>0&&<div className="profile-achievement-subgroup"><h4><ListChecks size={14}/> Completed project tasks</h4>{projectHistory.map((item:any)=><article key={"task-"+item.id}><span>✦</span><div><strong>{item.title}</strong><small>Completed contribution · {new Date(item.created_at).toLocaleDateString()}</small></div></article>)}</div>}</>}
         </section>
         <section className="profile-guestbook" aria-labelledby="my-profile-guestbook-title">
           <div className="profile-guestbook-heading"><div><span className="eyebrow">MESSAGES FROM YOUR PEOPLE</span><h3 id="my-profile-guestbook-title">Profile comments <span>{profileComments.length}</span></h3><p>A little space for LYKYOUs to leave you a message.</p></div><MessageCircle size={24}/></div>
