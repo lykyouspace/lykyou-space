@@ -12,3 +12,9 @@
 .profile-achievement-list article strong{color:#f0edff;font-size:10px}
 .profile-achievement-list article small{color:#a7a4bd;font-size:9px;line-height:1.5}
 .profile-achievement-list article>b{flex:none;color:#d3c5ff;font-size:10px}
+
+.profile-global-board-optin{display:flex!important;align-items:flex-start;gap:10px;padding:13px 14px;border:1px solid rgba(180,168,230,.18);border-radius:11px;background:rgba(167,139,250,.07)}
+.profile-global-board-optin input{flex:none;margin-top:3px;accent-color:#a78bfa}
+.profile-global-board-optin span{display:grid;gap:5px}
+.profile-global-board-optin strong{color:#eee9ff;font-size:11px}
+.profile-global-board-optin small{color:#aaa6c2;font-size:9px;line-height:1.6}
