@@ -32,6 +32,9 @@ export default function MusicHubPage() {
   const [pool, setPool] = useState<MusicTrack[]>([]);
   const [rankings, setRankings] = useState<MusicTrack[]>([]);
   const [recentTracks, setRecentTracks] = useState<MusicTrack[]>([]);
+  const [contentItems, setContentItems] = useState<any[]>([]);
+  const [contentQuery, setContentQuery] = useState("");
+  const [contentType, setContentType] = useState("all");
   const [myVote, setMyVote] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState(false);
@@ -49,13 +52,14 @@ export default function MusicHubPage() {
   const weekStart = mondayOf(today);
 
   const refresh = useCallback(async () => {
-    if (!supabase || !user) { setPool([]); setRankings([]); setRecentTracks([]); setLoading(false); return; }
+    if (!supabase || !user) { setPool([]); setRankings([]); setRecentTracks([]); setContentItems([]); setLoading(false); return; }
     setLoading(true);
-    const [poolResult, rankingResult, tracksResult, voteResult] = await Promise.all([
+    const [poolResult, rankingResult, tracksResult, voteResult, contentResult] = await Promise.all([
       supabase.rpc("get_weekly_music_pool"),
       supabase.rpc("get_weekly_music_results", { p_week_start: weekStart }),
       supabase.from("music_tracks").select("track_uri,title,artist,artwork_url,spotify_url,created_at").order("created_at", { ascending: false }).limit(60),
       supabase.from("music_weekly_votes").select("track_uri").eq("user_id", user.id).eq("vote_date", today).maybeSingle(),
+      supabase.from("lykn_universe_content").select("id,content_type,title,description,member_name,event_date,source_url").in("content_type",["release","solo_release","ost","collaboration","music_video","performance","variety","other_project","acting_project","brand_project"]).order("event_date",{ascending:false,nullsFirst:false}).limit(200),
     ]);
     if (poolResult.error) setError(poolResult.error.message);
     else setPool((poolResult.data ?? []) as MusicTrack[]);
@@ -63,6 +67,7 @@ export default function MusicHubPage() {
     else setRankings((rankingResult.data ?? []) as MusicTrack[]);
     if (tracksResult.error) setError(tracksResult.error.message);
     else setRecentTracks((tracksResult.data ?? []) as MusicTrack[]);
+    if (!contentResult.error) setContentItems(contentResult.data ?? []);
     if (voteResult.error && !voteResult.error.message.toLowerCase().includes("0 rows")) setError(voteResult.error.message);
     setMyVote(voteResult.data?.track_uri ?? null);
     setLoading(false);
@@ -177,6 +182,12 @@ export default function MusicHubPage() {
   }
 
   const filteredTracks = useMemo(() => recentTracks.filter((track) => (track.title + " " + track.artist).toLowerCase().includes(query.toLowerCase())), [recentTracks, query]);
+  const filteredContent = useMemo(() => contentItems.filter((item) => {
+    const matchesText = (item.title + " " + (item.description ?? "") + " " + (item.member_name ?? "")).toLowerCase().includes(contentQuery.toLowerCase());
+    const types:Record<string,string[]> = {music:["release","solo_release","ost","collaboration"],videos:["music_video"],performance:["performance"],projects:["variety","other_project","acting_project","brand_project"]};
+    return matchesText && (contentType==="all" || (types[contentType] ?? []).includes(item.content_type));
+  }), [contentItems, contentQuery, contentType]);
+  const calendarItems = useMemo(() => contentItems.filter((item) => item.event_date).slice(0,12), [contentItems]);
 
   return <section className="music-hub-page">
     <header className="music-hub-hero">
@@ -234,6 +245,18 @@ export default function MusicHubPage() {
       <div className="music-panel-heading"><div><span className="music-hub-eyebrow">TRACKS HEARD IN SPACE</span><h3><Music2 size={19}/> Music Library activity</h3></div></div>
       <input className="music-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tracks played in Space…"/>
       {!user ? <div className="music-empty-state">Sign in to build your listening history.</div> : filteredTracks.length === 0 ? <div className="music-empty-state">Tracks appear here after eligible listening activity is recorded.</div> : <div className="music-library-list">{filteredTracks.map((track) => <article className="music-library-track" key={track.track_uri}><div className="music-track-art">{track.artwork_url ? <img src={track.artwork_url} alt=""/> : <Music2/>}</div><div className="music-track-info"><strong>{track.title}</strong><span>{track.artist}</span></div><a href={track.spotify_url ?? ("https://open.spotify.com/track/" + spotifyTrackId(track.track_uri))} target="_blank" rel="noreferrer" aria-label={"Open " + track.title + " on Spotify"}><ExternalLink size={15}/></a></article>)}</div>}
+    </section>
+
+    <section className="music-panel music-content-search">
+      <div className="music-panel-heading"><div><span className="music-hub-eyebrow">SEARCHABLE LYKN ARCHIVE</span><h3><Music2 size={19}/> LYKN Content Finder</h3></div></div>
+      <input className="music-search" value={contentQuery} onChange={(event)=>setContentQuery(event.target.value)} placeholder="Search songs, music videos, performances and projects…"/>
+      <div className="music-content-filters">{[["all","All"],["music","Music"],["videos","Music videos"],["performance","Performances"],["projects","Other projects"]].map(([key,label])=><button key={key} className={contentType===key?"active":""} onClick={()=>setContentType(key)}>{label}</button>)}</div>
+      {filteredContent.length===0?<div className="music-empty-state">No matching archive entries. Try another search or category.</div>:<div className="music-content-list">{filteredContent.slice(0,30).map((item:any)=><article key={item.id}><div><strong>{item.title}</strong><span>{item.member_name||"LYKN"} · {item.content_type.replace("_"," ")}{item.event_date?" · "+item.event_date:""}</span>{item.description&&<p>{item.description}</p>}</div>{item.source_url&&<a href={item.source_url} target="_blank" rel="noreferrer" aria-label={"Open "+item.title}><ExternalLink size={14}/></a>}</article>)}</div>}
+    </section>
+
+    <section className="music-panel music-calendar-panel">
+      <span className="music-hub-eyebrow">DATED CONTENT FROM THE ARCHIVE</span><h3><Disc3 size={19}/> Release & Content Calendar</h3>
+      {calendarItems.length===0?<div className="music-empty-state">Dated releases and events will appear here as verified dates are added to the LYKN Archive.</div>:<div className="music-calendar-list">{calendarItems.map((item:any)=><article key={item.id}><time>{item.event_date}</time><div><strong>{item.title}</strong><span>{item.member_name||"LYKN"} · {item.content_type.replace("_"," ")}</span></div>{item.source_url&&<a href={item.source_url} target="_blank" rel="noreferrer"><ExternalLink size={13}/></a>}</article>)}</div>}
     </section>
 
     <section className="music-panel music-platform-panel">
