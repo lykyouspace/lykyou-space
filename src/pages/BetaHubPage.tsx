@@ -19,7 +19,7 @@ export default function BetaHubPage() {
   const { user, configured } = useAuth();
   const [active,setActive]=useState(false); const [loading,setLoading]=useState(true);
   const [feedback,setFeedback]=useState<Feedback[]>([]); const [tasks,setTasks]=useState<Task[]>([]);
-  const [issues,setIssues]=useState<Issue[]>([]); const [notes,setNotes]=useState<Note[]>([]);
+  const [issues,setIssues]=useState<Issue[]>([]); const [notes,setNotes]=useState<Note[]>([]); const [completedTasks,setCompletedTasks]=useState<string[]>([]);
   const [category,setCategory]=useState("bug"); const [severity,setSeverity]=useState("medium");
   const [title,setTitle]=useState(""); const [description,setDescription]=useState("");
   const [pageUrl,setPageUrl]=useState(""); const [steps,setSteps]=useState("");
@@ -30,7 +30,7 @@ export default function BetaHubPage() {
   const load=useCallback(async()=>{
     if(!supabase||!user){setLoading(false);return;}
     setLoading(true);
-    const [{data:access},{data:reports},{data:taskRows},{data:issueRows},{data:releaseRows}]=await Promise.all([
+    const [{data:access},{data:reports},{data:taskRows},{data:issueRows},{data:releaseRows},{data:completionRows}]=await Promise.all([
       supabase.from("beta_tester_access").select("access_status,recognition_badge").eq("user_id",user.id).maybeSingle(),
       supabase.from("beta_feedback").select("id,category,title,description,severity,status,admin_response,created_at").eq("tester_id",user.id).order("created_at",{ascending:false}).limit(50),
       supabase.from("beta_test_tasks").select("id,title,description,target_area,due_at").eq("is_published",true).order("created_at",{ascending:false}).limit(50),
@@ -56,7 +56,7 @@ export default function BetaHubPage() {
   async function completeTask(task:Task){
     if(!supabase||!user)return;
     const {error:err}=await supabase.from("beta_task_completions").upsert({task_id:task.id,tester_id:user.id,status:"completed",completed_at:new Date().toISOString()},{onConflict:"task_id,tester_id"});
-    if(err)setError(err.message);else setMessage("Testing task marked as completed.");
+    if(err)setError(err.message);else{setCompletedTasks(current=>current.includes(task.id)?current:[...current,task.id]);setMessage("Testing task marked as completed.");}
   }
   if(loading)return <main className="beta-hub"><p>Opening your Beta Testing Zone…</p></main>;
   if(!configured||!user)return <main className="beta-hub"><h1>Beta Testing Zone</h1><p>Please sign in to access the tester area.</p><Link to="/login">Sign in</Link></main>;
@@ -84,7 +84,7 @@ export default function BetaHubPage() {
       {feedback.length?feedback.map(item=><article className="bh-item" key={item.id}><div className="bh-item-top"><b>{item.title}</b><span className={"bh-status "+item.status}>{item.status.replace("_"," ")}</span></div><p>{item.description}</p><small>{item.category.replace("_"," ")} · {item.severity} · {new Date(item.created_at).toLocaleDateString()}</small>{item.admin_response&&<div className="bh-response"><b>Team response</b><p>{item.admin_response}</p></div>}</article>):<p className="bh-muted">Your submitted reports will appear here.</p>}
     </section>
     <section className="bh-section" id="tasks"><div className="bh-section-title"><ClipboardCheck/><div><h2>Testing missions</h2><p>Optional tasks from the team to help check important parts of the Space.</p></div></div>
-      {tasks.length?tasks.map(task=><article className="bh-item" key={task.id}><b>{task.title}</b><p>{task.description}</p><small>{task.target_area}{task.due_at?" · Due "+new Date(task.due_at).toLocaleDateString():""}</small><button className="bh-secondary" onClick={()=>void completeTask(task)}>Mark completed</button></article>):<p className="bh-muted">No testing missions have been posted yet.</p>}
+      {tasks.length?tasks.map(task=><article className="bh-item" key={task.id}><b>{task.title}</b><p>{task.description}</p><small>{task.target_area}{task.due_at?" · Due "+new Date(task.due_at).toLocaleDateString():""}</small><button className="bh-secondary" disabled={completedTasks.includes(task.id)} onClick={()=>void completeTask(task)}>{completedTasks.includes(task.id)?"✓ Completed":"Mark completed"}</button></article>):<p className="bh-muted">No testing missions have been posted yet.</p>}
     </section>
     <section className="bh-section" id="issues"><div className="bh-section-title"><Lightbulb/><div><h2>Known issues</h2><p>Check here before submitting a duplicate bug report.</p></div></div>
       {issues.length?issues.map(x=><article className="bh-item" key={x.id}><div className="bh-item-top"><b>{x.title}</b><span className={"bh-status "+x.status}>{x.status.replace("_"," ")}</span></div><p>{x.description}</p><small>{x.severity}</small></article>):<p className="bh-muted">No known issues have been published.</p>}
