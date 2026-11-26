@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 
 const AuthPage = lazy(() => import("./pages/AuthPage"));
 const BetaPage = lazy(() => import("./pages/BetaPage"));
+const BetaAdminPage = lazy(() => import("./pages/BetaAdminPage"));
 const SpacePages = lazy(() => import("./SpacePages"));
 
 const authPaths = new Set(["/login", "/signup", "/forgot-password", "/reset-password"]);
