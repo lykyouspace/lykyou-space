@@ -65,7 +65,7 @@ export default function BetaPage() {
         <div className="beta-kicker"><Sparkles size={13}/> YOUR PEOPLE. YOUR SPACE. YOUR LYKN UNIVERSE.</div>
         <h1>Your universe<br/><span>is almost ready.</span></h1>
         <p className="beta-lead">A global space for LYKYOUs to connect, share fandom moments, discover activities and find their people. We're getting ready to open the doors.</p>
-        <div className="beta-status"><span className="beta-status-dot"/> COMING SOON <i/> CLOSED BETA APPLICATIONS</div>
+        <div className="beta-status"><span className="beta-status-dot"/> COMING SOON <i/> BETA APPLICATIONS OPEN · LIMITED SPOTS</div>
       </header>
 
       <section className="beta-intro-grid">
