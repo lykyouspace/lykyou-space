@@ -18,3 +18,9 @@
 .beta-admin .beta-applicant-review label{color:#d2cfea}
 .beta-admin .beta-applicant-review button{background:linear-gradient(135deg,#c6b5ff,#9e83ed)!important;color:#20183b!important}
 @media(max-width:650px){.beta-admin{padding:18px 13px calc(48px + env(safe-area-inset-bottom))}.beta-admin-stats{display:grid;grid-template-columns:auto 1fr;align-items:center}.beta-applicant{padding:14px}.beta-applicant-head{flex-wrap:wrap}.beta-applicant-head>div{min-width:0;overflow-wrap:anywhere}}
+
+
+/* Full-viewport reset for standalone beta routes (they do not mount the main app stylesheet). */
+html,body,#root{width:100%;min-width:320px;min-height:100%;margin:0!important;padding:0!important;background:#070a1d!important}
+html,body{overflow-x:hidden}
+#root{min-height:100vh;min-height:100dvh}
