@@ -105,8 +105,25 @@ function SpacePages() {
   const [feedIsLive, setFeedIsLive] = useState(false);
   const [homeCountdown,setHomeCountdown] = useState<any>(null);
   const [currentProfile,setCurrentProfile] = useState<any>(null);
+  const [unreadNotificationCount,setUnreadNotificationCount] = useState(0);
   const go = (path: string) => { navigate(path); setMobileOpen(false); setMoreOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); };
   useEffect(() => { setMobileOpen(false); setMoreOpen(false); }, [location.pathname]);
+
+  useEffect(() => {
+    let active = true;
+    setUnreadNotificationCount(0);
+    if (!user || !configured || !supabase) return () => { active = false; };
+    const loadUnreadCount = async () => {
+      const { count, error } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .is("read_at", null);
+      if (active) setUnreadNotificationCount(error ? 0 : (count ?? 0));
+    };
+    void loadUnreadCount();
+    return () => { active = false; };
+  }, [user?.id, configured, location.pathname]);
 
   const refreshFeed = useCallback(async () => {
     if (!configured || !supabase) {
@@ -330,7 +347,7 @@ function SpacePages() {
         <div className="breadcrumb"><span>LYKYOU SPACE</span><ChevronRight size={14}/><strong>{current.label}</strong></div>
         <div className="topbar-actions">
           <label className="search-box"><Search size={17}/><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search your universe..." aria-label="Search posts and sections"/><kbd>⌘ K</kbd></label>
-          <button className="icon-button notification-button" aria-label="Notifications" onClick={() => go(user ? "/notifications" : "/login")}><Bell size={19}/><span/></button>
+          <button className="icon-button notification-button" aria-label={unreadNotificationCount > 0 ? `Notifications, ${unreadNotificationCount} unread` : "Notifications"} onClick={() => go(user ? "/notifications" : "/login")}><Bell size={19}/>{unreadNotificationCount > 0 && <span aria-hidden="true"/>}</button>
           <button className="profile-chip" onClick={() => go(user ? "/profile" : "/login")}><Avatar initials={(currentProfile?.display_name ?? user?.user_metadata?.display_name ?? "Y").slice(0,1).toUpperCase()} tone="mint" size="sm" src={currentProfile?.avatar_url ?? undefined}/><span>{currentProfile?.display_name ?? user?.user_metadata?.display_name ?? "Guest"}</span><ChevronDown size={14}/></button>
         </div>
       </header>
