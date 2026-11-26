@@ -106,7 +106,7 @@ export default function BetaPage() {
             <label><input type="checkbox" checked={form.email_consent} onChange={(e)=>update("email_consent",e.target.checked)}/> I agree to receive beta application and testing updates by email.</label>
           </div>
           <label className="beta-honeypot" aria-hidden="true">Leave this field empty<input tabIndex={-1} autoComplete="off" value={trap} onChange={(e)=>setTrap(e.target.value)}/></label>
-          <div className="beta-privacy"><ShieldCheck size={16}/><span>Your application details will only be used by the LYKYOU Space team to review beta applications and contact applicants. Your application is separate from creating a LYKYOU Space member account. See our <Link to="/settings">privacy information</Link>.</span></div>
+          <div className="beta-privacy"><ShieldCheck size={16}/><span>Your application details will only be used by the LYKYOU Space team to review beta applications and contact applicants. Your application is separate from creating a LYKYOU Space member account. Application details are private and are visible only to authorised admins reviewing the beta.</span></div>
           <button className="beta-submit" type="submit" disabled={busy}>{busy?"Submitting application…":"Submit beta application"} {!busy&&<ArrowRight size={17}/>}</button>
           <p className="beta-required">* Required confirmations. Applying does not guarantee selection. The beta is limited and selected applicants will be contacted by email.</p>
         </form>
