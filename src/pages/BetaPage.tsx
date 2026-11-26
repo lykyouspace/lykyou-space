@@ -77,7 +77,7 @@ export default function BetaPage() {
       {sent ? <section className="beta-success" role="status">
         <CheckCircle2 size={38}/><div className="beta-kicker">APPLICATION RECEIVED</div>
         <h2>You're on our beta list!</h2>
-        <p>Thank you for applying to test LYKYOU Space. Our team will review applications and contact selected testers using the email address you provided.</p>
+        <p>Thank you for applying to test LYKYOU Space. Our team will review applications and contact selected testers using the email address you provided. If selected, create your regular LYKYOU Space account with this same email address; an admin will then activate your private Beta Testing Zone.</p>
         <p className="beta-small">Submitting an application does not guarantee selection. Please keep an eye on your inbox.</p>
         <Link className="beta-submit" to="/">Return to LYKYOU Space <ArrowRight size={16}/></Link>
       </section> : <section className="beta-form-card" id="beta-application">
