@@ -113,8 +113,9 @@ function SpacePages() {
     let active = true;
     setUnreadNotificationCount(0);
     if (!user || !configured || !supabase) return () => { active = false; };
+    const client = supabase;
     const loadUnreadCount = async () => {
-      const { count, error } = await supabase
+      const { count, error } = await client
         .from("notifications")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id)
