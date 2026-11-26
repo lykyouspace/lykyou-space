@@ -10,23 +10,25 @@ type Tester={user_id:string;access_status:string;granted_at:string;recognition_b
 type Task={id:string;title:string;description:string;target_area:string;is_published:boolean};
 type Issue={id:string;title:string;description:string;severity:string;status:string};
 type Note={id:string;title:string;body:string;version_label:string;is_published:boolean};
+type Survey={tester_id:string;overall_rating:number;ease_rating:number;would_recommend:boolean;what_worked:string;what_didnt_work:string;improvements:string;final_note:string;submitted_at:string};
 const feedbackStatuses=["new","reviewing","planned","fixed","duplicate","wont_fix"];
 export default function BetaManagementPage(){
  const {user,configured}=useAuth();const {isAdmin}=useStaffRole();
  const [feedback,setFeedback]=useState<Feedback[]>([]);const [privateNotes,setPrivateNotes]=useState<Record<string,string>>({});const [testers,setTesters]=useState<Tester[]>([]);
- const [tasks,setTasks]=useState<Task[]>([]);const [issues,setIssues]=useState<Issue[]>([]);const [notes,setNotes]=useState<Note[]>([]);
+ const [tasks,setTasks]=useState<Task[]>([]);const [issues,setIssues]=useState<Issue[]>([]);const [notes,setNotes]=useState<Note[]>([]);const [surveys,setSurveys]=useState<Survey[]>([]);
  const [filter,setFilter]=useState("new");const [loading,setLoading]=useState(true);const [busy,setBusy]=useState("");const [error,setError]=useState("");const [message,setMessage]=useState("");
  const [taskTitle,setTaskTitle]=useState("");const [taskDescription,setTaskDescription]=useState("");const [taskArea,setTaskArea]=useState("General");
  const [issueTitle,setIssueTitle]=useState("");const [issueDescription,setIssueDescription]=useState("");const [issueSeverity,setIssueSeverity]=useState("medium");
  const [noteTitle,setNoteTitle]=useState("");const [noteBody,setNoteBody]=useState("");const [noteVersion,setNoteVersion]=useState("");
  const load=useCallback(async()=>{
   if(!supabase||!user||!isAdmin){setLoading(false);return;}setLoading(true);setError("");
-  const [f,t,a,i,n]=await Promise.all([
+  const [f,t,a,i,n,surv]=await Promise.all([
    supabase.from("beta_feedback").select("*").order("created_at",{ascending:false}).limit(250),
    supabase.from("beta_tester_access").select("user_id,access_status,granted_at,recognition_badge").order("granted_at",{ascending:false}).limit(200),
    supabase.from("beta_test_tasks").select("id,title,description,target_area,is_published").order("created_at",{ascending:false}).limit(100),
    supabase.from("beta_known_issues").select("id,title,description,severity,status").order("created_at",{ascending:false}).limit(100),
-   supabase.from("beta_release_notes").select("id,title,body,version_label,is_published").order("created_at",{ascending:false}).limit(100)
+   supabase.from("beta_release_notes").select("id,title,body,version_label,is_published").order("created_at",{ascending:false}).limit(100),
+   supabase.from("beta_exit_surveys").select("tester_id,overall_rating,ease_rating,would_recommend,what_worked,what_didnt_work,improvements,final_note,submitted_at").order("submitted_at",{ascending:false}).limit(200)
   ]);
   if(f.error)setError(f.error.message);const feedbackRows=(f.data??[]) as Feedback[];setFeedback(feedbackRows);
   const {data:noteRows}=feedbackRows.length?await supabase.from("beta_feedback_admin_notes").select("feedback_id,internal_notes").in("feedback_id",feedbackRows.map(x=>x.id)):{data:[] as any[]};
@@ -35,7 +37,7 @@ export default function BetaManagementPage(){
   const {data:profiles}=ids.length?await supabase.from("profiles").select("id,username,display_name").in("id",ids):{data:[] as any[]};
   const byId=new Map((profiles??[]).map((p:any)=>[p.id,p]));
   setTesters(access.map(x=>({...x,username:byId.get(x.user_id)?.username,display_name:byId.get(x.user_id)?.display_name})));
-  setTasks((a.data??[]) as Task[]);setIssues((i.data??[]) as Issue[]);setNotes((n.data??[]) as Note[]);setLoading(false);
+  setTasks((a.data??[]) as Task[]);setIssues((i.data??[]) as Issue[]);setNotes((n.data??[]) as Note[]);setSurveys((surv.data??[]) as Survey[]);setLoading(false);
  },[user?.id,isAdmin]);
  useEffect(()=>{void load()},[load]);
  async function updateFeedback(row:Feedback,status:string,response:string,internal:string){
@@ -79,6 +81,7 @@ export default function BetaManagementPage(){
  <section className="bm-section"><h2>Feedback inbox</h2><p>Reports are private to the submitting tester and authorised admins. Admin responses are visible to the tester; internal notes are not.</p>
  <nav className="bm-filters">{["new","reviewing","planned","fixed","duplicate","wont_fix","all"].map(x=><button className={filter===x?"active":""} key={x} onClick={()=>setFilter(x)}>{x.replace("_"," ")}</button>)}</nav>
  {loading?<p>Loading…</p>:visible.length?visible.map(row=><FeedbackCard key={row.id} row={row} privateNote={privateNotes[row.id]??""} busy={busy===row.id} onSave={(s,r,n)=>void updateFeedback(row,s,r,n)}/>):<p className="bm-muted">No feedback in this view.</p>}</section>
+ <section className="bm-section"><h2>Beta exit surveys</h2><p>Private end-of-beta reviews from testers. Use these to prioritise the public launch checklist.</p>{surveys.length?surveys.map(x=><article className="bm-feedback" key={x.tester_id}><div className="bm-feedback-head"><b>Tester · {x.tester_id.slice(0,8)}</b><small>{new Date(x.submitted_at).toLocaleDateString()}</small></div><p><b>Overall:</b> {x.overall_rating}/5 · <b>Ease:</b> {x.ease_rating}/5 · <b>Recommend:</b> {x.would_recommend?"Yes":"Not yet"}</p><p><b>Worked well:</b> {x.what_worked||"—"}</p><p><b>Needs work:</b> {x.what_didnt_work||"—"}</p><p><b>Improvements:</b> {x.improvements||"—"}</p><p><b>Final note:</b> {x.final_note||"—"}</p></article>):<p className="bm-muted">No exit surveys have been submitted yet.</p>}</section>
  <section className="bm-section"><h2>Testing missions</h2><form className="bm-form" onSubmit={addTask}><label>Mission title<input required minLength={3} maxLength={140} value={taskTitle} onChange={e=>setTaskTitle(e.target.value)}/></label><label>Instructions<textarea required minLength={10} maxLength={3000} value={taskDescription} onChange={e=>setTaskDescription(e.target.value)}/></label><label>Feature / area<input value={taskArea} maxLength={100} onChange={e=>setTaskArea(e.target.value)}/></label><button disabled={busy==="task"}><Plus size={15}/> Publish mission</button></form>
  {tasks.map(t=><article className="bm-row" key={t.id}><div><b>{t.title}</b><small>{t.target_area} · {t.is_published?"Published":"Draft"}</small></div></article>)}</section>
  <section className="bm-section"><h2>Known issues board</h2><form className="bm-form" onSubmit={addIssue}><label>Issue title<input required minLength={4} maxLength={180} value={issueTitle} onChange={e=>setIssueTitle(e.target.value)}/></label><label>Details<textarea maxLength={2000} value={issueDescription} onChange={e=>setIssueDescription(e.target.value)}/></label><label>Severity<select value={issueSeverity} onChange={e=>setIssueSeverity(e.target.value)}><option>low</option><option>medium</option><option>high</option><option>critical</option></select></label><button disabled={busy==="issue"}><Plus size={15}/> Publish known issue</button></form>{issues.map(i=><article className="bm-row" key={i.id}><div><b>{i.title}</b><small>{i.severity} · {i.status}</small></div></article>)}</section>
