@@ -12,3 +12,9 @@
 .beta-page .beta-form-card fieldset{min-width:0;border:0;border-top:1px solid rgba(189,180,229,.13)}
 .beta-page .beta-choice-grid label,.beta-page .beta-interest-grid label,.beta-page .beta-check-label{border-color:rgba(188,177,229,.16);box-shadow:none}
 .beta-page .beta-submit:focus-visible,.beta-page a:focus-visible{outline:2px solid #c4b5fd;outline-offset:3px}
+
+
+/* Full-viewport reset for standalone beta routes (they do not mount the main app stylesheet). */
+html,body,#root{width:100%;min-width:320px;min-height:100%;margin:0!important;padding:0!important;background:#070a1d!important}
+html,body{overflow-x:hidden}
+#root{min-height:100vh;min-height:100dvh}
