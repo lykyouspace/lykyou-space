@@ -12,9 +12,11 @@ export default function App() {
   const { pathname } = useLocation();
   const page = pathname === "/beta"
     ? <BetaPage />
-    : authPaths.has(pathname)
-      ? <AuthPage />
-      : <SpacePages />;
+    : pathname === "/admin/beta"
+      ? <BetaAdminPage />
+      : authPaths.has(pathname)
+        ? <AuthPage />
+        : <SpacePages />;
 
   return <Suspense fallback={<div className="app-loading" role="status">Opening your space…</div>}>{page}</Suspense>;
 }
