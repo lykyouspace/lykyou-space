@@ -5,7 +5,7 @@ import { useAuth, useStaffRole } from "../lib/auth";
 import { supabase } from "../lib/supabase";
 import "./beta-management.css";
 
-type Feedback={id:string;tester_id:string;category:string;title:string;description:string;severity:string;status:string;admin_response:string;internal_notes:string;created_at:string};
+type Feedback={id:string;tester_id:string;category:string;title:string;description:string;severity:string;status:string;admin_response:string;created_at:string};
 type Tester={user_id:string;access_status:string;granted_at:string;recognition_badge:boolean;username?:string;display_name?:string};
 type Task={id:string;title:string;description:string;target_area:string;is_published:boolean};
 type Issue={id:string;title:string;description:string;severity:string;status:string};
@@ -13,7 +13,7 @@ type Note={id:string;title:string;body:string;version_label:string;is_published:
 const feedbackStatuses=["new","reviewing","planned","fixed","duplicate","wont_fix"];
 export default function BetaManagementPage(){
  const {user,configured}=useAuth();const {isAdmin}=useStaffRole();
- const [feedback,setFeedback]=useState<Feedback[]>([]);const [testers,setTesters]=useState<Tester[]>([]);
+ const [feedback,setFeedback]=useState<Feedback[]>([]);const [privateNotes,setPrivateNotes]=useState<Record<string,string>>({});const [testers,setTesters]=useState<Tester[]>([]);
  const [tasks,setTasks]=useState<Task[]>([]);const [issues,setIssues]=useState<Issue[]>([]);const [notes,setNotes]=useState<Note[]>([]);
  const [filter,setFilter]=useState("new");const [loading,setLoading]=useState(true);const [busy,setBusy]=useState("");const [error,setError]=useState("");const [message,setMessage]=useState("");
  const [taskTitle,setTaskTitle]=useState("");const [taskDescription,setTaskDescription]=useState("");const [taskArea,setTaskArea]=useState("General");
@@ -28,7 +28,7 @@ export default function BetaManagementPage(){
    supabase.from("beta_known_issues").select("id,title,description,severity,status").order("created_at",{ascending:false}).limit(100),
    supabase.from("beta_release_notes").select("id,title,body,version_label,is_published").order("created_at",{ascending:false}).limit(100)
   ]);
-  if(f.error)setError(f.error.message);setFeedback((f.data??[]) as Feedback[]);
+  if(f.error)setError(f.error.message);const feedbackRows=(f.data??[]) as Feedback[];setFeedback(feedbackRows);\n  const {data:noteRows}=feedbackRows.length?await supabase.from("beta_feedback_admin_notes").select("feedback_id,internal_notes").in("feedback_id",feedbackRows.map(x=>x.id)):{data:[] as any[]};\n  setPrivateNotes(Object.fromEntries((noteRows??[]).map((x:any)=>[x.feedback_id,x.internal_notes])));
   const access=(t.data??[]) as Tester[];const ids=access.map(x=>x.user_id);
   const {data:profiles}=ids.length?await supabase.from("profiles").select("id,username,display_name").in("id",ids):{data:[] as any[]};
   const byId=new Map((profiles??[]).map((p:any)=>[p.id,p]));
@@ -72,14 +72,14 @@ export default function BetaManagementPage(){
  <Link className="bm-link" to="/admin/beta">Review beta applications →</Link></section>
  <section className="bm-section"><h2>Feedback inbox</h2><p>Reports are private to the submitting tester and authorised admins. Admin responses are visible to the tester; internal notes are not.</p>
  <nav className="bm-filters">{["new","reviewing","planned","fixed","duplicate","wont_fix","all"].map(x=><button className={filter===x?"active":""} key={x} onClick={()=>setFilter(x)}>{x.replace("_"," ")}</button>)}</nav>
- {loading?<p>Loading…</p>:visible.length?visible.map(row=><FeedbackCard key={row.id} row={row} busy={busy===row.id} onSave={(s,r,n)=>void updateFeedback(row,s,r,n)}/>):<p className="bm-muted">No feedback in this view.</p>}</section>
+ {loading?<p>Loading…</p>:visible.length?visible.map(row=><FeedbackCard key={row.id} row={row} privateNote={privateNotes[row.id]??""} busy={busy===row.id} onSave={(s,r,n)=>void updateFeedback(row,s,r,n)}/>):<p className="bm-muted">No feedback in this view.</p>}</section>
  <section className="bm-section"><h2>Testing missions</h2><form className="bm-form" onSubmit={addTask}><label>Mission title<input required minLength={3} maxLength={140} value={taskTitle} onChange={e=>setTaskTitle(e.target.value)}/></label><label>Instructions<textarea required minLength={10} maxLength={3000} value={taskDescription} onChange={e=>setTaskDescription(e.target.value)}/></label><label>Feature / area<input value={taskArea} maxLength={100} onChange={e=>setTaskArea(e.target.value)}/></label><button disabled={busy==="task"}><Plus size={15}/> Publish mission</button></form>
  {tasks.map(t=><article className="bm-row" key={t.id}><div><b>{t.title}</b><small>{t.target_area} · {t.is_published?"Published":"Draft"}</small></div></article>)}</section>
  <section className="bm-section"><h2>Known issues board</h2><form className="bm-form" onSubmit={addIssue}><label>Issue title<input required minLength={4} maxLength={180} value={issueTitle} onChange={e=>setIssueTitle(e.target.value)}/></label><label>Details<textarea maxLength={2000} value={issueDescription} onChange={e=>setIssueDescription(e.target.value)}/></label><label>Severity<select value={issueSeverity} onChange={e=>setIssueSeverity(e.target.value)}><option>low</option><option>medium</option><option>high</option><option>critical</option></select></label><button disabled={busy==="issue"}><Plus size={15}/> Publish known issue</button></form>{issues.map(i=><article className="bm-row" key={i.id}><div><b>{i.title}</b><small>{i.severity} · {i.status}</small></div></article>)}</section>
  <section className="bm-section"><h2>Release notes</h2><form className="bm-form" onSubmit={addNote}><label>Version / update label<input maxLength={40} value={noteVersion} onChange={e=>setNoteVersion(e.target.value)} placeholder="Beta update 01"/></label><label>Title<input required minLength={3} maxLength={160} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label><label>What's changed?<textarea required minLength={5} maxLength={4000} value={noteBody} onChange={e=>setNoteBody(e.target.value)}/></label><button disabled={busy==="note"}><Plus size={15}/> Publish release note</button></form>{notes.map(n=><article className="bm-row" key={n.id}><div><b>{n.version_label} · {n.title}</b><small>{n.is_published?"Published":"Draft"}</small></div></article>)}</section>
  </div></main>;
 }
-function FeedbackCard({row,busy,onSave}:{row:Feedback;busy:boolean;onSave:(s:string,r:string,n:string)=>void}){
- const [status,setStatus]=useState(row.status);const [response,setResponse]=useState(row.admin_response??"");const [internal,setInternal]=useState(row.internal_notes??"");
+function FeedbackCard({row,privateNote,busy,onSave}:{row:Feedback;privateNote:string;busy:boolean;onSave:(s:string,r:string,n:string)=>void}){
+ const [status,setStatus]=useState(row.status);const [response,setResponse]=useState(row.admin_response??"");const [internal,setInternal]=useState(privateNote);
  return <article className="bm-feedback"><div className="bm-feedback-head"><div><b>{row.title}</b><small>{row.category.replace("_"," ")} · {row.severity} · {new Date(row.created_at).toLocaleString()}</small></div><span>{row.status}</span></div><p>{row.description}</p><label>Status<select value={status} onChange={e=>setStatus(e.target.value)}>{feedbackStatuses.map(x=><option key={x} value={x}>{x.replace("_"," ")}</option>)}</select></label><label>Response to tester<textarea rows={2} value={response} onChange={e=>setResponse(e.target.value)} maxLength={2000}/></label><label>Internal admin notes<textarea rows={2} value={internal} onChange={e=>setInternal(e.target.value)} maxLength={2000}/></label><button disabled={busy} onClick={()=>onSave(status,response,internal)}>{busy?"Saving…":"Save feedback review"}</button></article>
 }
