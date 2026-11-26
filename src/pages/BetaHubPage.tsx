@@ -90,6 +90,7 @@ export default function BetaHubPage() {
     <section className="bh-section" id="issues"><div className="bh-section-title"><Lightbulb/><div><h2>Known issues</h2><p>Check here before submitting a duplicate bug report.</p></div></div>
       {issues.length?issues.map(x=><article className="bh-item" key={x.id}><div className="bh-item-top"><b>{x.title}</b><span className={"bh-status "+x.status}>{x.status.replace("_"," ")}</span></div><p>{x.description}</p><small>{x.severity}</small></article>):<p className="bh-muted">No known issues have been published.</p>}
     </section>
+    <section className="bh-section"><div className="bh-section-title"><Sparkles/><div><h2>Finishing your beta journey</h2><p>When you are ready, share a final review in the beta exit survey. You can also complete it after beta access ends.</p></div></div><Link to="/beta-exit-survey" className="bh-survey-link">Open beta exit survey →</Link></section>
     <section className="bh-section" id="updates"><div className="bh-section-title"><Sparkles/><div><h2>Release notes</h2><p>What's changed in the latest beta updates.</p></div></div>
       {notes.length?notes.map(x=><article className="bh-item" key={x.id}><b>{x.version_label&&x.version_label+" · "}{x.title}</b><p>{x.body}</p><small>{x.published_at?new Date(x.published_at).toLocaleDateString():""}</small></article>):<p className="bh-muted">No release notes yet.</p>}
     </section>
