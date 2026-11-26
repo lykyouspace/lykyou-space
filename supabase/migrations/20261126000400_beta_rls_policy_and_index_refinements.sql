@@ -1,0 +1,20 @@
+-- Avoid redundant permissive SELECT policies and index beta workflow foreign keys.
+drop policy if exists beta_tasks_admin_manage on public.beta_test_tasks;
+create policy beta_tasks_admin_insert on public.beta_test_tasks for insert to authenticated with check((select public.is_admin()));
+create policy beta_tasks_admin_update on public.beta_test_tasks for update to authenticated using((select public.is_admin())) with check((select public.is_admin()));
+create policy beta_tasks_admin_delete on public.beta_test_tasks for delete to authenticated using((select public.is_admin()));
+drop policy if exists beta_known_issues_admin_manage on public.beta_known_issues;
+create policy beta_known_issues_admin_insert on public.beta_known_issues for insert to authenticated with check((select public.is_admin()));
+create policy beta_known_issues_admin_update on public.beta_known_issues for update to authenticated using((select public.is_admin())) with check((select public.is_admin()));
+create policy beta_known_issues_admin_delete on public.beta_known_issues for delete to authenticated using((select public.is_admin()));
+drop policy if exists beta_release_notes_admin_manage on public.beta_release_notes;
+create policy beta_release_notes_admin_insert on public.beta_release_notes for insert to authenticated with check((select public.is_admin()));
+create policy beta_release_notes_admin_update on public.beta_release_notes for update to authenticated using((select public.is_admin())) with check((select public.is_admin()));
+create policy beta_release_notes_admin_delete on public.beta_release_notes for delete to authenticated using((select public.is_admin()));
+create index if not exists beta_tester_access_granted_by_idx on public.beta_tester_access(granted_by);
+create index if not exists beta_feedback_assigned_to_idx on public.beta_feedback(assigned_to);
+create index if not exists beta_feedback_admin_notes_updated_by_idx on public.beta_feedback_admin_notes(updated_by);
+create index if not exists beta_test_tasks_created_by_idx on public.beta_test_tasks(created_by);
+create index if not exists beta_task_completions_tester_id_idx on public.beta_task_completions(tester_id);
+create index if not exists beta_known_issues_created_by_idx on public.beta_known_issues(created_by);
+create index if not exists beta_release_notes_created_by_idx on public.beta_release_notes(created_by);
