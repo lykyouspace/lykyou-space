@@ -27,3 +27,5 @@
 .profile-achievement-subgroup article>div{display:grid;gap:3px}
 .profile-achievement-subgroup article strong{color:#f0edff;font-size:10px}
 .profile-achievement-subgroup article small{color:#a7a4bd;font-size:9px}
+
+.beta-early-crew-badge{display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:5px 9px;border:1px solid rgba(196,181,253,.38);border-radius:20px;background:linear-gradient(100deg,rgba(124,58,237,.18),rgba(125,211,252,.12));color:#d9c7ff;font-size:10px;font-weight:750;letter-spacing:.02em}
