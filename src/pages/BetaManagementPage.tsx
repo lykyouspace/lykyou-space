@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, RefreshCw, ShieldCheck, Plus, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, RefreshCw, ShieldCheck, Plus } from "lucide-react";
 import { useAuth, useStaffRole } from "../lib/auth";
 import { supabase } from "../lib/supabase";
 import "./beta-management.css";
