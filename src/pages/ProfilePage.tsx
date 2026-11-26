@@ -55,6 +55,8 @@ export default function ProfilePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [profileComments, setProfileComments] = useState<any[]>([]);
+  const [betaAccessStatus, setBetaAccessStatus] = useState<string | null>(null);
+  const [betaRecognition, setBetaRecognition] = useState(false);
   const [gameHistory, setGameHistory] = useState<any[]>([]);
   const [eventHistory, setEventHistory] = useState<any[]>([]);
   const [projectHistory, setProjectHistory] = useState<any[]>([]);
@@ -69,17 +71,20 @@ export default function ProfilePage() {
         setLoading(false);
         return;
       }
-      const [{ data, error: loadError }, { data: privateData, error: privateError }] = await Promise.all([
+      const [{ data, error: loadError }, { data: privateData, error: privateError }, { data: betaAccess }] = await Promise.all([
         supabase.from("profiles")
           .select("username,display_name,bio,bias,bias_wrecker,favourite_song,favourite_era,profile_visibility,avatar_url,cover_url")
           .eq("id", user.id).maybeSingle(),
         supabase.from("profile_private")
           .select("city,state,country,timezone,fan_journey,interests,social_links,global_board_opt_in")
           .eq("user_id", user.id).maybeSingle(),
+        supabase.from("beta_tester_access").select("access_status,recognition_badge").eq("user_id", user.id).maybeSingle(),
       ]);
       if (!active) return;
       if (loadError) setError(loadError.message);
       if (privateError) setError(privateError.message);
+      setBetaAccessStatus(betaAccess?.access_status ?? null);
+      setBetaRecognition(Boolean(betaAccess?.recognition_badge));
       if (privateData) {
         const links = privateData.social_links ?? {};
         setPrivateForm({
@@ -289,7 +294,7 @@ export default function ProfilePage() {
       <div className="member-profile-cover" style={coverUrl ? { backgroundImage: "linear-gradient(90deg,rgba(10,8,28,.28),rgba(10,8,28,.12)),url(" + coverUrl + ")", backgroundSize:"cover", backgroundPosition:"center" } : undefined}><span>✦ YOUR LYKYOU SPACE ✦</span></div>
       <div className="member-profile-main">
         <div className="member-profile-avatar">{avatarUrl ? <img src={avatarUrl} alt="Profile" /> : (form.display_name || user.user_metadata?.display_name || "L").slice(0,1).toUpperCase()}</div>
-        <div className="member-profile-title"><div><h2>{form.display_name || user.user_metadata?.display_name || "LYKYOU"}</h2><span>@{form.username || "username-not-set"}</span></div><div className="member-profile-actions">{isStaff && <button className="button-outline" onClick={() => navigate("/admin")}>Admin HQ</button>}<button className="button-primary" onClick={() => setEditing(true)}>Edit profile</button><button className="button-outline" onClick={async()=>{if(supabase){await supabase.auth.signOut();navigate("/login");}}}>Log out</button></div></div>
+        <div className="member-profile-title"><div><h2>{form.display_name || user.user_metadata?.display_name || "LYKYOU"}</h2><span>@{form.username || "username-not-set"}</span>{betaRecognition && <span className="beta-early-crew-badge">✦ Early LYKYOU Space tester</span>}</div><div className="member-profile-actions">{betaAccessStatus === "active" && <button className="button-outline" onClick={() => navigate("/beta-zone")}>Beta Testing Zone</button>}{isStaff && <button className="button-outline" onClick={() => navigate("/admin")}>Admin HQ</button>}<button className="button-primary" onClick={() => setEditing(true)}>Edit profile</button><button className="button-outline" onClick={async()=>{if(supabase){await supabase.auth.signOut();navigate("/login");}}}>Log out</button></div></div>
         <div className="member-profile-media-actions">
           <label className="button-outline profile-upload-button"><Camera size={14}/>{uploading === "avatar" ? "Uploading…" : "Change picture"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={!!uploading} onChange={(e)=>{void uploadProfileImage("avatar",e.target.files?.[0]);e.currentTarget.value="";}}/></label>
           <label className="button-outline profile-upload-button"><ImagePlus size={14}/>{uploading === "cover" ? "Uploading…" : "Change cover"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={!!uploading} onChange={(e)=>{void uploadProfileImage("cover",e.target.files?.[0]);e.currentTarget.value="";}}/></label>
