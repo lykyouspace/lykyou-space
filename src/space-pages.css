@@ -3904,3 +3904,300 @@ body { min-width: 320px; overflow-x: hidden; }
  .space-pages .mobile-hero-disclaimer{display:inline-block;color:#d9ccff;font-size:8px;letter-spacing:.13em;font-weight:800;margin-top:2px}
 }
 @media(max-width:390px){.space-pages .mobile-home-hero{min-height:365px}.space-pages .mobile-page-hero-content{padding-left:15px;padding-right:15px}.space-pages .mobile-page-hero h1{font-size:29px}.space-pages .mobile-hero-primary,.space-pages .mobile-hero-secondary{min-height:37px;padding:0 10px}}
+
+
+/* LYKYOU SPACE — final phone layout pass (mobile only; desktop styles are untouched). */
+@media (max-width: 700px) {
+  .space-pages,
+  .space-pages.app-shell,
+  .space-pages.home-app-shell,
+  .space-pages .main-column,
+  .space-pages .home-main-column,
+  .space-pages .page-content,
+  .space-pages .home-page {
+    min-width:0!important;
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:clip!important;
+  }
+  .space-pages .page-content {
+    min-height:0!important;
+    height:auto!important;
+    padding:14px 12px calc(88px + env(safe-area-inset-bottom))!important;
+  }
+  .space-pages .page-content > * {
+    min-height:0;
+    height:auto;
+    max-width:100%;
+  }
+  /* Never let the desktop hero duplicate the phone hero or leave an empty hero slot. */
+  .space-pages .desktop-page-hero,
+  .space-pages .home-page > .hero-banner,
+  .space-pages .community-hero-banner,
+  .space-pages .community-hero-image {
+    display:none!important;
+    height:0!important;
+    min-height:0!important;
+    max-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+  }
+  .space-pages .mobile-page-hero {
+    display:flex!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0 0 17px!important;
+    border-radius:17px!important;
+  }
+  .space-pages .mobile-page-hero > img {
+    display:block!important;
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:none!important;
+    object-fit:cover!important;
+  }
+  .space-pages .mobile-home-hero {
+    min-height:300px!important;
+    max-height:390px!important;
+  }
+  .space-pages .mobile-home-hero .mobile-page-hero-content {
+    padding:20px 16px 42px!important;
+  }
+  .space-pages .mobile-home-hero .mobile-hero-footnote {
+    left:15px!important;
+    right:auto!important;
+  }
+  .space-pages .mobile-community-hero {
+    min-height:175px!important;
+    max-height:220px!important;
+  }
+  .space-pages .mobile-community-hero .mobile-page-hero-content {
+    padding:20px 16px!important;
+  }
+  .space-pages .mobile-community-hero h1 {
+    font-size:clamp(25px,7vw,33px)!important;
+    margin:8px 0 5px!important;
+  }
+  .space-pages .mobile-community-hero p { margin-bottom:0!important; }
+  .space-pages .mobile-bias-hero { min-height:205px!important; }
+  .space-pages .mobile-meet-lykn-hero { min-height:230px!important; }
+  .space-pages .mobile-page-hero-content { min-width:0!important; }
+  .space-pages .mobile-page-hero p { overflow-wrap:anywhere; }
+
+  /* Remove accidental tall media frames and fixed desktop-height sections. */
+  .space-pages .community-hero-banner,
+  .space-pages .universe-banner,
+  .space-pages .fun-hero,
+  .space-pages .hub-feature,
+  .space-pages .events-page-hero,
+  .space-pages .project-wall-hero,
+  .space-pages .updates-hero,
+  .space-pages .bias-corner-hero {
+    height:auto;
+    max-height:none;
+  }
+  .space-pages .community-layout,
+  .space-pages .home-columns,
+  .space-pages .groups-content-grid,
+  .space-pages .profile-layout,
+  .space-pages .admin-layout,
+  .space-pages .music-layout {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:14px!important;
+    width:100%!important;
+  }
+  .space-pages .community-aside,
+  .space-pages .home-side,
+  .space-pages .groups-side-content {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;
+  }
+  .space-pages .quick-grid,
+  .space-pages .discovery-grid,
+  .space-pages .game-grid,
+  .space-pages .hub-grid,
+  .space-pages .member-grid,
+  .space-pages .groups-grid,
+  .space-pages .updates-grid,
+  .space-pages .music-link-grid,
+  .space-pages .fandom-mission-grid,
+  .space-pages .achievement-group-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:9px!important;
+  }
+  .space-pages .section-heading {
+    align-items:flex-start!important;
+    flex-wrap:wrap!important;
+    gap:9px!important;
+    margin:16px 0 12px!important;
+  }
+  .space-pages .section-heading > * { min-width:0; }
+  .space-pages .section-heading h2 {
+    font-size:clamp(19px,5.4vw,24px)!important;
+    line-height:1.2!important;
+  }
+  .space-pages .section-heading p { font-size:11px!important; }
+  .space-pages .filter-tabs,
+  .space-pages .groups-category-tabs,
+  .space-pages .notifications-tabs,
+  .space-pages .member-filters,
+  .space-pages .updates-filters {
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overscroll-behavior-x:contain;
+    scrollbar-width:none;
+    padding-bottom:5px;
+  }
+  .space-pages .filter-tabs::-webkit-scrollbar,
+  .space-pages .groups-category-tabs::-webkit-scrollbar,
+  .space-pages .notifications-tabs::-webkit-scrollbar { display:none; }
+  .space-pages .filter-tabs button,
+  .space-pages .groups-category-tabs button,
+  .space-pages .notifications-tabs button,
+  .space-pages .member-filters button {
+    flex:0 0 auto!important;
+    min-height:37px!important;
+    white-space:nowrap!important;
+  }
+  .space-pages .composer {
+    display:flex!important;
+    gap:9px!important;
+    padding:11px!important;
+    width:100%!important;
+  }
+  .space-pages .composer-main { min-width:0!important; width:100%!important; }
+  .space-pages .composer textarea { min-height:58px!important; font-size:13px!important; }
+  .space-pages .composer-actions {
+    display:flex!important;
+    align-items:center!important;
+    flex-wrap:wrap!important;
+    gap:8px!important;
+  }
+  .space-pages .composer-actions > span { display:none!important; }
+  .space-pages .composer-actions select,
+  .space-pages .composer-actions label,
+  .space-pages .composer-actions button { min-height:36px!important; }
+  .space-pages .post-card,
+  .space-pages .side-panel,
+  .space-pages .rail-card,
+  .space-pages .group-card,
+  .space-pages .update-card,
+  .space-pages .member-result,
+  .space-pages .settings-panel,
+  .space-pages .admin-hq-section {
+    min-width:0!important;
+    padding:13px!important;
+    border-radius:14px!important;
+  }
+  .space-pages .post-copy,
+  .space-pages .group-card p,
+  .space-pages .update-body p,
+  .space-pages .aside-copy {
+    overflow-wrap:anywhere;
+    line-height:1.6!important;
+  }
+  .space-pages .post-media,
+  .space-pages .update-card img,
+  .space-pages .member-result img {
+    display:block;
+    max-width:100%!important;
+    height:auto;
+    object-fit:cover;
+  }
+  .space-pages .group-create,
+  .space-pages .universe-publish,
+  .space-pages .update-publish-form,
+  .space-pages .hub-submit-form,
+  .space-pages .schedule-entry-form,
+  .space-pages .profile-editor {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+    width:100%!important;
+    padding:14px!important;
+  }
+  .space-pages input,
+  .space-pages select,
+  .space-pages textarea {
+    min-width:0!important;
+    max-width:100%!important;
+    font-size:16px!important;
+  }
+  .space-pages button,
+  .space-pages a.button-primary,
+  .space-pages a.button-outline {
+    touch-action:manipulation;
+  }
+  .space-pages .table-scroll,
+  .space-pages .schedule-entry-list,
+  .space-pages .music-table-wrap,
+  .space-pages .fandom-crossword-grid {
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  .space-pages .mobile-bar {
+    height:calc(61px + env(safe-area-inset-bottom))!important;
+    padding:5px 3px calc(5px + env(safe-area-inset-bottom))!important;
+    display:grid!important;
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    gap:1px!important;
+    z-index:80!important;
+  }
+  .space-pages .mobile-bar button {
+    min-width:0!important;
+    min-height:48px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    align-items:center!important;
+    gap:3px!important;
+    font-size:8px!important;
+    line-height:1!important;
+  }
+  .space-pages .mobile-bar button svg { width:18px!important;height:18px!important; }
+  .space-pages .site-footer {
+    display:block!important;
+    padding:17px 13px!important;
+    line-height:1.65!important;
+    overflow-wrap:anywhere;
+  }
+  .space-pages .site-footer > * { display:block; margin:4px 0; }
+  .space-pages .notice-bar { margin:8px 12px!important; }
+  .space-pages .universe-banner.meet-lykn-banner {
+    min-height:220px!important;
+    height:220px!important;
+    max-height:220px!important;
+  }
+  .space-pages .universe-banner.meet-lykn-banner .universe-banner-group-photo {
+    object-fit:cover!important;
+    object-position:center 40%!important;
+  }
+}
+@media (max-width: 390px) {
+  .space-pages .page-content { padding-left:10px!important;padding-right:10px!important; }
+  .space-pages .quick-grid,
+  .space-pages .discovery-grid,
+  .space-pages .game-grid,
+  .space-pages .hub-grid,
+  .space-pages .member-grid,
+  .space-pages .groups-grid,
+  .space-pages .updates-grid,
+  .space-pages .music-link-grid,
+  .space-pages .fandom-mission-grid,
+  .space-pages .achievement-group-grid { grid-template-columns:minmax(0,1fr)!important; }
+  .space-pages .mobile-home-hero { min-height:285px!important; }
+  .space-pages .mobile-page-hero h1 { font-size:27px!important; }
+  .space-pages .composer { gap:7px!important; }
+}
