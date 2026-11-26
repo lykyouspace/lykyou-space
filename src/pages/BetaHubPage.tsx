@@ -35,10 +35,11 @@ export default function BetaHubPage() {
       supabase.from("beta_feedback").select("id,category,title,description,severity,status,admin_response,created_at").eq("tester_id",user.id).order("created_at",{ascending:false}).limit(50),
       supabase.from("beta_test_tasks").select("id,title,description,target_area,due_at").eq("is_published",true).order("created_at",{ascending:false}).limit(50),
       supabase.from("beta_known_issues").select("id,title,description,severity,status").order("created_at",{ascending:false}).limit(50),
-      supabase.from("beta_release_notes").select("id,title,body,version_label,published_at").eq("is_published",true).order("published_at",{ascending:false}).limit(30)
+      supabase.from("beta_release_notes").select("id,title,body,version_label,published_at").eq("is_published",true).order("published_at",{ascending:false}).limit(30),
+      supabase.from("beta_task_completions").select("task_id").eq("tester_id",user.id)
     ]);
     setActive(access?.access_status==="active"); setFeedback((reports??[]) as Feedback[]);
-    setTasks((taskRows??[]) as Task[]); setIssues((issueRows??[]) as Issue[]); setNotes((releaseRows??[]) as Note[]);
+    setTasks((taskRows??[]) as Task[]); setIssues((issueRows??[]) as Issue[]); setNotes((releaseRows??[]) as Note[]); setCompletedTasks((completionRows??[]).map((x:any)=>x.task_id));
     setLoading(false);
   },[user?.id]);
   useEffect(()=>{void load()},[load]);
