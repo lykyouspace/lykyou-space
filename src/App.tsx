@@ -4,6 +4,8 @@ import { useLocation } from "react-router-dom";
 const AuthPage = lazy(() => import("./pages/AuthPage"));
 const BetaPage = lazy(() => import("./pages/BetaPage"));
 const BetaAdminPage = lazy(() => import("./pages/BetaAdminPage"));
+const BetaHubPage = lazy(() => import("./pages/BetaHubPage"));
+const BetaManagementPage = lazy(() => import("./pages/BetaManagementPage"));
 const SpacePages = lazy(() => import("./SpacePages"));
 
 const authPaths = new Set(["/login", "/signup", "/forgot-password", "/reset-password"]);
@@ -12,8 +14,12 @@ export default function App() {
   const { pathname } = useLocation();
   const page = pathname === "/beta"
     ? <BetaPage />
-    : pathname === "/admin/beta"
-      ? <BetaAdminPage />
+    : pathname === "/beta-zone"
+      ? <BetaHubPage />
+      : pathname === "/admin/beta-testing"
+        ? <BetaManagementPage />
+      : pathname === "/admin/beta"
+        ? <BetaAdminPage />
       : authPaths.has(pathname)
         ? <AuthPage />
         : <SpacePages />;
