@@ -37,6 +37,7 @@ const mainNav: NavItem[] = [
   { label: "Music Library", path: "/music-library", icon: Headphones, description: "Listen, discover and vote in weekly charts" },
   { label: "Fandom Lab", path: "/fandom-lab", icon: Sparkles, description: "Interactive fandom tools and experiences" },
   { label: "LYKN Updates", path: "/updates", icon: Megaphone, description: "Fanclub updates and schedules" },
+  { label: "Beta Access", path: "/beta", icon: Sparkles, description: "Apply to test LYKYOU Space early" },
 ];
 const members = [
   { name: "WILLIAM", role: "Vocal · Performer", tone: "lavender", initials: "W" },
