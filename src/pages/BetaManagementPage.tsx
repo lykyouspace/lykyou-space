@@ -28,7 +28,9 @@ export default function BetaManagementPage(){
    supabase.from("beta_known_issues").select("id,title,description,severity,status").order("created_at",{ascending:false}).limit(100),
    supabase.from("beta_release_notes").select("id,title,body,version_label,is_published").order("created_at",{ascending:false}).limit(100)
   ]);
-  if(f.error)setError(f.error.message);const feedbackRows=(f.data??[]) as Feedback[];setFeedback(feedbackRows);\n  const {data:noteRows}=feedbackRows.length?await supabase.from("beta_feedback_admin_notes").select("feedback_id,internal_notes").in("feedback_id",feedbackRows.map(x=>x.id)):{data:[] as any[]};\n  setPrivateNotes(Object.fromEntries((noteRows??[]).map((x:any)=>[x.feedback_id,x.internal_notes])));
+  if(f.error)setError(f.error.message);const feedbackRows=(f.data??[]) as Feedback[];setFeedback(feedbackRows);
+  const {data:noteRows}=feedbackRows.length?await supabase.from("beta_feedback_admin_notes").select("feedback_id,internal_notes").in("feedback_id",feedbackRows.map(x=>x.id)):{data:[] as any[]};
+  setPrivateNotes(Object.fromEntries((noteRows??[]).map((x:any)=>[x.feedback_id,x.internal_notes])));
   const access=(t.data??[]) as Tester[];const ids=access.map(x=>x.user_id);
   const {data:profiles}=ids.length?await supabase.from("profiles").select("id,username,display_name").in("id",ids):{data:[] as any[]};
   const byId=new Map((profiles??[]).map((p:any)=>[p.id,p]));
@@ -38,8 +40,12 @@ export default function BetaManagementPage(){
  useEffect(()=>{void load()},[load]);
  async function updateFeedback(row:Feedback,status:string,response:string,internal:string){
   if(!supabase||!user)return;setBusy(row.id);setError("");setMessage("");
-  const {error:e}=await supabase.from("beta_feedback").update({status,admin_response:response,internal_notes:internal,assigned_to:user.id}).eq("id",row.id);
-  if(e)setError(e.message);else{setMessage("Feedback updated.");await load()}setBusy("");
+  const {error:e}=await supabase.from("beta_feedback").update({status,admin_response:response,assigned_to:user.id}).eq("id",row.id);
+  if(e)setError(e.message);else{
+   const {error:noteError}=await supabase.from("beta_feedback_admin_notes").upsert({feedback_id:row.id,internal_notes:internal,updated_by:user.id});
+   if(noteError)setError(noteError.message);else{setMessage("Feedback updated.");await load()}
+  }
+  setBusy("");
  }
  async function endAccess(t:Tester){
   if(!supabase)return;if(!window.confirm("End beta access for @"+(t.username??"this tester")+"? Their normal member account and content will remain unchanged."))return;
