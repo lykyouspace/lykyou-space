@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { KeyRound, RefreshCw, Shield, ShieldCheck, UserPlus, Users } from "lucide-react";
+import { KeyRound, RefreshCw, Shield, ShieldCheck, UserPlus, Users, ClipboardList } from "lucide-react";
 import { useAuth, useStaffRole } from "../lib/auth";
 import { supabase } from "../lib/supabase";
 
@@ -268,6 +268,7 @@ export default function AdminHQPage() {
           <button onClick={()=>navigate("/updates")}><RefreshCw size={16}/> LYKN Updates & schedules <span>Publish updates →</span></button>
           <button onClick={()=>navigate("/fan-project-wall")}><ShieldCheck size={16}/> Fan projects & approvals <span>Manage projects →</span></button>
           <button onClick={()=>navigate("/events-countdowns")}><KeyRound size={16}/> Events & countdowns <span>Manage events →</span></button>
+          {isAdmin && <button onClick={()=>navigate("/admin/beta")}><ClipboardList size={16}/> Beta applications <span>Review applicants →</span></button>}
         </div>
       </div>
       <div className="admin-hq-stats">
