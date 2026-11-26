@@ -25,6 +25,12 @@ export default function BetaAdminPage(){
   if(error)setError(error.message);else{setMessage("Application updated.");await load()}
   setBusy("");
  }
+ async function grantAccess(row:Application){
+  if(!supabase)return;setBusy(row.id);setError("");setMessage("");
+  const {error}=await supabase.rpc("grant_beta_tester_access",{p_application_id:row.id});
+  if(error)setError(error.message);else{setMessage("Beta access granted. The tester can now sign in and open the Beta Testing Zone.");await load()}
+  setBusy("");
+ }
  if(!configured)return <main className="beta-admin"><p>Supabase is not connected.</p></main>;
  if(!user||!isAdmin)return <main className="beta-admin"><ShieldCheck/><h1>Admin access required</h1><p>Beta applications are private and visible only to admins.</p><Link to="/admin">Back to Admin HQ</Link></main>;
  const visible=rows.filter(r=>filter==="all"||r.status===filter);
@@ -33,7 +39,7 @@ export default function BetaAdminPage(){
  {error&&<p className="beta-admin-error">{error}</p>}{message&&<p className="beta-admin-success">{message}</p>}
  <div className="beta-admin-stats"><strong>{rows.length}</strong><span>Total applications</span><strong>{rows.filter(r=>r.status==="selected").length}</strong><span>Selected</span><strong>{rows.filter(r=>r.status==="pending").length}</strong><span>Awaiting review</span></div>
  <nav className="beta-admin-filters">{["pending","selected","waitlisted","not_selected","withdrawn","all"].map(x=><button className={filter===x?"active":""} key={x} onClick={()=>setFilter(x)}>{x.replace("_"," ")}</button>)}</nav>
- {loading?<p>Loading applications…</p>:visible.length===0?<p className="beta-admin-empty">No applications in this view.</p>:<div className="beta-admin-list">{visible.map(row=><ApplicationCard key={row.id} row={row} busy={busy===row.id} onSave={(status,notes)=>void update(row,status,notes)}/>)}</div>}
+ {loading?<p>Loading applications…</p>:visible.length===0?<p className="beta-admin-empty">No applications in this view.</p>:<div className="beta-admin-list">{visible.map(row=><div className="beta-applicant-wrap" key={row.id}><ApplicationCard row={row} busy={busy===row.id} onSave={(status,notes)=>void update(row,status,notes)}/>{row.status==="selected"&&<button className="beta-grant-access" disabled={busy===row.id} onClick={()=>void grantAccess(row)}>{busy===row.id?"Granting…":"Grant account access"}</button>}</div>)}</div>}
  </main>
 }
 function ApplicationCard({row,busy,onSave}:{row:Application;busy:boolean;onSave:(status:string,notes:string)=>void}){
